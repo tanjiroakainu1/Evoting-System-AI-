@@ -1,0 +1,200 @@
+import { useState, type FormEvent } from 'react'
+import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../context/useAuth'
+import { InstitutionalTopBar } from '../components/InstitutionalTopBar'
+import { getDemoCredentialsForLogin } from '../lib/authStorage'
+import { safePostLoginPath } from '../lib/safeRedirect'
+import { resolvePostLoginRedirect } from '../lib/rolePaths'
+
+const demoRows = getDemoCredentialsForLogin()
+
+const inputClass =
+  'mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-stone-900 shadow-inner shadow-stone-300/40 placeholder:text-stone-500 transition-colors duration-200 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/35'
+
+export function LoginPage() {
+  const { user, login } = useAuth()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const fromQuery = safePostLoginPath(searchParams.get('redirect'))
+  const fromState = safePostLoginPath(
+    (location.state as { from?: { pathname?: string } } | null)?.from
+      ?.pathname,
+  )
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  if (user) {
+    return (
+      <Navigate
+        to={resolvePostLoginRedirect(fromQuery ?? fromState, user)}
+        replace
+      />
+    )
+  }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    setError(null)
+    try {
+      login(email, password)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in.')
+    }
+  }
+
+  function fillDemo(rowEmail: string, rowPassword: string) {
+    setEmail(rowEmail)
+    setPassword(rowPassword)
+    setError(null)
+  }
+
+  return (
+    <div className="flex min-h-svh flex-col bg-stone-50">
+      <InstitutionalTopBar containerClass="max-w-lg">
+        <div>
+          <p className="font-display text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-red-200/85">
+            E‑Vote · ISPSC Tagudin
+          </p>
+          <p className="font-display text-base font-semibold text-white">
+            Sign in
+          </p>
+        </div>
+      </InstitutionalTopBar>
+      <div className="pointer-events-none fixed inset-0 top-14 bg-[radial-gradient(ellipse_at_top,_rgba(185,28,28,0.08),transparent_55%)] sm:top-16" />
+      <div className="relative mx-auto flex min-h-0 flex-1 max-w-lg flex-col justify-center px-4 py-12 sm:px-5">
+        <div className="rounded-2xl border border-stone-200 bg-white p-8 shadow-2xl shadow-stone-300/50 ring-1 ring-stone-200 backdrop-blur-sm sm:p-9">
+          <h1 className="font-display text-center text-2xl font-semibold tracking-tight text-red-900">
+            Sign in
+          </h1>
+          <p className="mt-2 text-center text-sm text-stone-500">
+            E‑Vote · Digital voting system
+          </p>
+          <form onSubmit={onSubmit} className="mt-8 space-y-5">
+            <fieldset className="space-y-4 border-0 p-0">
+              <legend className="sr-only">Email address and password</legend>
+              <div>
+                <label
+                  htmlFor="login-email-address"
+                  className="block text-sm font-medium text-red-800/90"
+                >
+                  Email address
+                </label>
+                <input
+                  id="login-email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="username"
+                  inputMode="email"
+                  required
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="login-password"
+                  className="block text-sm font-medium text-red-800/90"
+                >
+                  Password
+                </label>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </fieldset>
+            {error ? (
+              <p className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-900">
+                {error}
+              </p>
+            ) : null}
+            <button
+              type="submit"
+              className="font-display w-full rounded-xl bg-gradient-to-r from-red-600 via-red-800 to-neutral-950 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-red-950/35 transition-all duration-200 hover:from-red-500 hover:shadow-xl hover:shadow-red-950/25 active:scale-[0.99]"
+            >
+              Sign in
+            </button>
+          </form>
+          <p className="mt-6 text-center text-sm text-stone-500">
+            Voter without an account?{' '}
+            <Link
+              to="/register"
+              className="font-medium text-red-700 hover:text-red-800"
+            >
+              Register here
+            </Link>
+          </p>
+          <p className="mt-4 text-center">
+            <Link
+              to="/"
+              className="text-sm text-stone-500 hover:text-red-800/90"
+            >
+              ← Back to home
+            </Link>
+          </p>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-stone-200 bg-stone-50 p-6 shadow-xl shadow-stone-300/45 ring-1 ring-stone-200/90 backdrop-blur-sm">
+          <h2 className="font-display text-sm font-semibold text-red-900">
+            Demo accounts (local)
+          </h2>
+          <p className="mt-1 text-xs text-stone-500">
+            Preloaded users for each role. Click a role to fill the form—only
+            visible on this sign-in page. New accounts created via Register use
+            an 8-character password; demo logins below may use other lengths.
+          </p>
+          <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 shadow-inner shadow-stone-200/50">
+            <table className="w-full min-w-[20rem] text-left text-sm">
+              <thead>
+                <tr className="border-b border-stone-200 bg-white text-xs uppercase tracking-wider text-stone-500">
+                  <th className="px-3 py-2 font-medium text-red-800/80">Role</th>
+                  <th className="px-3 py-2 font-medium text-red-800/80">
+                    Email address
+                  </th>
+                  <th className="px-3 py-2 font-medium text-red-800/80">
+                    Password
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {demoRows.map((row) => (
+                  <tr
+                    key={row.role}
+                    className="border-b border-stone-200/80 transition-colors last:border-0 hover:bg-red-50"
+                  >
+                    <td className="px-3 py-2.5">
+                      <button
+                        type="button"
+                        onClick={() => fillDemo(row.email, row.password)}
+                        className="text-left font-medium text-red-700 transition-colors hover:text-red-800 hover:underline"
+                      >
+                        {row.roleLabel}
+                      </button>
+                    </td>
+                    <td className="px-3 py-2 font-mono text-xs text-stone-400">
+                      {row.email}
+                    </td>
+                    <td className="px-3 py-2 font-mono text-xs text-stone-400">
+                      {row.password}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
