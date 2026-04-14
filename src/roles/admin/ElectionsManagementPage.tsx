@@ -202,7 +202,7 @@ export function ElectionsManagementPage(props?: {
       setEditDescription(e.description)
       setEditOrg(e.organizationType)
       setEditVenue(e.votingVenue)
-      setEditPolicies(e.policies)
+      setEditPolicies(typeof e.policies === 'string' ? e.policies : '')
       setEditStart(toDatetimeLocalValue(new Date(e.startAt)))
       setEditEnd(toDatetimeLocalValue(new Date(e.endAt)))
       setEditPositions(new Set(e.positionIds))
@@ -879,14 +879,14 @@ export function ElectionsManagementPage(props?: {
                 <DetailRow
                   label="Policies & procedures"
                   value={
-                    detailElection.policies.trim()
+                    (detailElection.policies ?? '').trim()
                       ? 'Set (voters must accept before voting)'
                       : 'Not set'
                   }
                 />
                 <DetailRow
                   label="Positions"
-                  value={detailElection.positionTitles.join(', ')}
+                  value={(detailElection.positionTitles ?? []).join(', ')}
                 />
                 <DetailRow
                   label="Status"

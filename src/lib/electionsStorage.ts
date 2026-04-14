@@ -152,6 +152,39 @@ function mergeMissingSeedElections(list: ElectionRecord[]): ElectionRecord[] {
   return next
 }
 
+/** Coerce partial / legacy JSON rows so UI and migrations never throw. */
+function normalizeElectionShape(e: ElectionRecord): ElectionRecord {
+  const positionIds = Array.isArray(e.positionIds) ? e.positionIds : []
+  const positionTitles = Array.isArray(e.positionTitles) ? e.positionTitles : []
+  return {
+    ...e,
+    title: typeof e.title === 'string' ? e.title : '',
+    description: typeof e.description === 'string' ? e.description : '',
+    organizationType:
+      typeof e.organizationType === 'string' ? e.organizationType : '',
+    votingVenue: typeof e.votingVenue === 'string' ? e.votingVenue : '',
+    policies: typeof e.policies === 'string' ? e.policies : '',
+    startAt: typeof e.startAt === 'string' ? e.startAt : new Date().toISOString(),
+    endAt: typeof e.endAt === 'string' ? e.endAt : new Date().toISOString(),
+    positionIds,
+    positionTitles,
+    electionPin: typeof e.electionPin === 'string' ? e.electionPin : '',
+    displayId:
+      typeof e.displayId === 'number' && Number.isFinite(e.displayId)
+        ? e.displayId
+        : 0,
+  }
+}
+
+function normalizeElectionsList(list: ElectionRecord[]): ElectionRecord[] {
+  const next = list.map(normalizeElectionShape)
+  if (JSON.stringify(next) !== JSON.stringify(list)) {
+    writeElections(next)
+    emitElectionsChanged()
+  }
+  return next
+}
+
 function syncVoterEnrollmentsForElection(electionId: string): void {
   const voters = getAllUsers().filter(
     (u) =>
@@ -198,6 +231,7 @@ function readElections(): ElectionRecord[] {
       }
     }
     list = migrateElectionPins(list)
+    list = normalizeElectionsList(list)
     for (const seed of SEED_ELECTIONS) {
       syncVoterEnrollmentsForElection(seed.id)
     }
@@ -461,7 +495,9 @@ function buildSeedVotes(
 
 function ensureDemoBallotSeed(elections: ElectionRecord[]): void {
   const demo = elections.find((e) => e.id === demoElection.id)
-  if (!demo || demo.positionIds.length < 2) return
+  if (!demo || !Array.isArray(demo.positionIds) || demo.positionIds.length < 2) {
+    return
+  }
   const presId = demo.positionIds[0]!
   const vpId = demo.positionIds[1]!
 
@@ -481,7 +517,13 @@ function ensureDemoBallotSeed(elections: ElectionRecord[]): void {
 }
 
 function nextDisplayId(elections: ElectionRecord[]): number {
-  return elections.reduce((m, e) => Math.max(m, e.displayId), 0) + 1
+  return (
+    elections.reduce((m, e) => {
+      const d = e.displayId
+      const n = typeof d === 'number' && Number.isFinite(d) ? d : 0
+      return Math.max(m, n)
+    }, 0) + 1
+  )
 }
 
 function randomPin6(): string {
