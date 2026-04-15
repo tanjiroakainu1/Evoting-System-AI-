@@ -53,6 +53,31 @@ export function VoterDashboard() {
 
   return (
     <div className="space-y-6">
+      <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-stone-500">
+              Ballot access
+            </p>
+            <p className="text-sm text-stone-600">
+              View all elections you are enrolled in and open each ballot.
+            </p>
+          </div>
+          <Link
+            to="/voter/elections"
+            className="font-display inline-flex items-center rounded-lg border border-red-600 bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-800"
+          >
+            Open elections
+          </Link>
+          <Link
+            to="/voter/ballot-history"
+            className="font-display inline-flex items-center rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 hover:border-red-300 hover:text-red-800"
+          >
+            Ballot history
+          </Link>
+        </div>
+      </section>
+
       {enrolledActive.length > 0 ? (
         <section className="rounded-2xl border border-red-500/35 bg-gradient-to-br from-red-950/40 to-stone-50 p-6 shadow-lg ring-1 ring-red-800/30">
           <h2 className="font-display text-lg font-semibold text-red-900">

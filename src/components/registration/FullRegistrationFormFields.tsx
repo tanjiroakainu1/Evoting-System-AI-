@@ -6,6 +6,7 @@ import {
   GENDERS,
   SEMESTERS,
   STUDENT_STATUSES,
+  YEAR_LEVELS,
 } from '../../lib/registrationOptions'
 
 const label =
@@ -332,19 +333,15 @@ export function FullRegistrationFormFields({
               className={inputClass}
             />
           </div>
-          <div>
-            <label htmlFor={`${p}year-level`} className={label}>
-              Year *
-            </label>
-            <input
-              id={`${p}year-level`}
-              required
-              placeholder="e.g. 4th Year"
-              value={v.year}
-              onChange={(e) => set({ year: e.target.value })}
-              className={inputClass}
-            />
-          </div>
+          <SelectPlaceholder
+            id={`${p}year-level`}
+            labelText="Year"
+            required
+            value={v.year}
+            onChange={(year) => set({ year })}
+            options={YEAR_LEVELS as unknown as string[]}
+            placeholder="Select..."
+          />
           <div>
             <label htmlFor={`${p}academic-year`} className={label}>
               Academic year *
@@ -394,18 +391,16 @@ export function FullRegistrationFormFields({
                 type="password"
                 autoComplete="new-password"
                 required={!passwordFieldsOptional}
-                minLength={passwordFieldsOptional ? undefined : 8}
-                maxLength={passwordFieldsOptional ? undefined : 8}
                 value={v.password}
                 onChange={(e) => set({ password: e.target.value })}
                 className={inputClass}
               />
               <p className="mt-1.5 text-xs text-stone-500">
                 {passwordFieldsOptional
-                  ? 'Leave blank to keep the current password. Otherwise use exactly 8 characters.'
+                  ? 'Leave blank to keep the current password.'
                   : passwordMode === 'register'
-                    ? 'Password must be exactly 8 characters.'
-                    : 'Use exactly 8 characters for new accounts (demo rule).'}
+                    ? 'Use a secure password.'
+                    : 'Set a secure password for the account.'}
               </p>
             </div>
             <div className="sm:col-span-2">

@@ -111,6 +111,15 @@ export function AdminDashboard() {
             Turnout, ranked tallies, and percentage bars per office.
           </p>
         </Link>
+        <Link
+          to={rolePath('admin', 'vote-logs')}
+          className={`${panel} block text-left no-underline`}
+        >
+          <h2 className="font-medium text-red-900">Submitted ballot logs</h2>
+          <p className="mt-1 text-sm text-stone-500">
+            Recent voter ballot submissions with election and timestamp details.
+          </p>
+        </Link>
         <div className={panel}>
           <h2 className="font-medium text-red-900">Your profile</h2>
           <p className="mt-1 text-sm text-stone-500">{user?.email}</p>

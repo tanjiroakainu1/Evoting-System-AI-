@@ -12,7 +12,7 @@ export function UserManagementPage() {
       idPrefix="um-"
       accountTypeOptions={ACCOUNT_TYPES}
       addUserHeading="Register administrator"
-      addUserBlurb="Create a new administrator account. Password must be exactly 8 characters."
+      addUserBlurb="Create a new administrator account."
     />
   )
 }

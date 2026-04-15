@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../../context/useAuth'
 import { getElectionLifecycleStatus } from '../../types/election'
 import { readFileAsDataUrl } from '../../lib/readDataUrl'
-import { getElections, submitCampaignApplication } from '../../lib/electionsStorage'
+import {
+  getElections,
+  getMyCampaignApplications,
+  submitCampaignApplication,
+} from '../../lib/electionsStorage'
 import { MyCampaignApplicationsList } from './MyCampaignApplicationsList'
 
 const fieldClass =
@@ -13,6 +17,7 @@ const btnPrimary =
 
 export function CandidateCampaignApplicationPage() {
   const { user } = useAuth()
+  const candidateUserId = user?.id ?? ''
   const [elections, setElections] = useState(getElections)
   const [electionId, setElectionId] = useState('')
   const [positionId, setPositionId] = useState('')
@@ -32,8 +37,14 @@ export function CandidateCampaignApplicationPage() {
   }, [refreshElections])
 
   const selectedElection = elections.find((e) => e.id === electionId)
+  const appliedElectionIds = new Set(
+    getMyCampaignApplications(candidateUserId).map((a) => a.electionId),
+  )
   const openElections = elections.filter(
     (e) => getElectionLifecycleStatus(e) !== 'completed',
+  )
+  const availableElections = openElections.filter(
+    (e) => !appliedElectionIds.has(e.id),
   )
   const positionOptions = selectedElection
     ? selectedElection.positionIds.map((id, i) => ({
@@ -107,8 +118,8 @@ export function CandidateCampaignApplicationPage() {
           Campaign Application
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-stone-500">
-          Candidate accounts apply here for a specific office. Your platform must
-          be at least 50 characters. An administrator will{' '}
+          Candidate accounts apply once per election. Your platform must be at
+          least 50 characters. An administrator will{' '}
           <span className="text-stone-400">approve</span> or{' '}
           <span className="text-stone-400">reject</span> each filing; only
           approved campaigns appear on the ballot, including your optional
@@ -138,12 +149,17 @@ export function CandidateCampaignApplicationPage() {
             className={`${fieldClass} cursor-pointer py-2.5`}
           >
             <option value="">Select Election...</option>
-            {openElections.map((el) => (
+            {availableElections.map((el) => (
               <option key={el.id} value={el.id} className="bg-white">
                 {el.title} (ID {el.displayId})
               </option>
             ))}
           </select>
+          {availableElections.length === 0 ? (
+            <p className="mt-1 text-xs text-amber-800/90">
+              You already applied to all currently open elections.
+            </p>
+          ) : null}
         </div>
 
         <div>

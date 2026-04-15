@@ -14,17 +14,17 @@ import type { AppRole } from '../types/roles'
 import { getRoleDisplayLabel } from '../types/roles'
 
 const headerBarClass =
-  'border-b border-red-950/40 bg-gradient-to-r from-[#140808] via-[#0f0606] to-[#140808] text-white shadow-md shadow-red-950/20'
+  'border-b border-red-900/40 bg-gradient-to-r from-[#4a151f] via-[#3a1119] to-[#4a151f] text-white shadow-md shadow-red-900/25'
 
 const asideShellClass =
-  'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-950/40 bg-gradient-to-b from-[#140808] via-[#0f0606] to-[#0c0505]'
+  'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-900/35 bg-gradient-to-b from-[#49141f] via-[#3a1119] to-[#2f0d14]'
 
 function sidebarNavClass({ isActive }: { isActive: boolean }) {
   return [
     'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-200',
     isActive
-      ? 'bg-red-950/75 text-red-50 ring-1 ring-red-700/45 shadow-md shadow-red-950/20'
-      : 'text-stone-400 hover:bg-red-950/40 hover:text-red-50',
+      ? 'bg-red-900/70 text-red-50 ring-1 ring-red-700/45 shadow-md shadow-red-900/20'
+      : 'text-stone-300 hover:bg-red-900/45 hover:text-red-50',
   ].join(' ')
 }
 
@@ -189,6 +189,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               >
                 Campaign applications
               </NavItem>
+              <NavItem to={`${base}/vote-logs`} onNavigate={onNavigate}>
+                Submitted ballot logs
+              </NavItem>
             </>
           ) : null}
 
@@ -200,6 +203,21 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                 onNavigate={onNavigate}
               >
                 Campaign application
+              </NavItem>
+              <NavItem to={`${base}/campaign/history`} onNavigate={onNavigate}>
+                Application history
+              </NavItem>
+            </>
+          ) : null}
+
+          {user.role === 'voter' ? (
+            <>
+              <SidebarLabel>Elections</SidebarLabel>
+              <NavItem to={`${base}/elections`} onNavigate={onNavigate}>
+                Elections
+              </NavItem>
+              <NavItem to={`${base}/ballot-history`} onNavigate={onNavigate}>
+                Ballot history
               </NavItem>
             </>
           ) : null}

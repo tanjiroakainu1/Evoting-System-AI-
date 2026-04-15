@@ -1,9 +1,7 @@
 import type { AppRole } from '../types/roles'
+import { mirrorElectionActivityLogs } from './supabase/mirror'
 
-export type ElectionActivityActorRole =
-  | 'admin'
-  | 'mis_office'
-  | 'osa_office'
+export type ElectionActivityActorRole = AppRole
 
 /** Roles allowed to perform logged election actions in this demo. */
 export const ELECTION_ACTIVITY_ROLES: readonly ElectionActivityActorRole[] = [
@@ -35,6 +33,7 @@ export type ElectionActivityAction =
   | 'election_delete'
   | 'election_manual_complete'
   | 'results_publish'
+  | 'vote_cast'
 
 export type ElectionActivityLogEntry = {
   id: string
@@ -70,6 +69,7 @@ function readRaw(): ElectionActivityLogEntry[] {
 
 function writeRaw(rows: ElectionActivityLogEntry[]) {
   localStorage.setItem(LOG_KEY, JSON.stringify(rows))
+  void mirrorElectionActivityLogs(rows)
 }
 
 export function appendElectionActivityLog(
@@ -103,5 +103,7 @@ export function electionActivityActionLabel(
       return 'Election marked complete (backup)'
     case 'results_publish':
       return 'Official results recorded'
+    case 'vote_cast':
+      return 'Ballot submitted'
   }
 }

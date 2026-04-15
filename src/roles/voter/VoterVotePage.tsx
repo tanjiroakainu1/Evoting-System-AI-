@@ -14,6 +14,7 @@ import {
   getElectionById,
   getEnrollmentForVoter,
   getVoterBallotSelections,
+  hasVoterSubmittedBallot,
 } from '../../lib/electionsStorage'
 import { roleBasePath } from '../../lib/rolePaths'
 
@@ -96,8 +97,8 @@ function VoterActiveBallotForm({
           Ballot
         </h2>
         <p className="mt-2 text-sm text-stone-500">
-          Select one candidate per office. You can change your choices and
-          submit again while voting is open.
+          Select one candidate per office. Ballot submission is allowed once per
+          election.
         </p>
         <ul className="mt-4 space-y-6">
           {election.positionIds.map((positionId, idx) => {
@@ -222,6 +223,9 @@ export function VoterVotePage() {
   const election = getElectionById(electionId)
   const enrollment = getEnrollmentForVoter(electionId, user.id)
   const status = election ? getElectionLifecycleStatus(election) : null
+  const alreadySubmitted = election
+    ? hasVoterSubmittedBallot(election.id, user.id)
+    : false
 
   if (!election) {
     return (
@@ -245,6 +249,26 @@ export function VoterVotePage() {
           administrator if this is a mistake.
         </p>
         <Link to={roleBasePath('voter')} className="mt-6 inline-block text-red-700 hover:text-red-800">
+          ← Voter dashboard
+        </Link>
+      </div>
+    )
+  }
+
+  if (alreadySubmitted) {
+    return (
+      <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-8">
+        <h1 className="font-display text-xl font-semibold text-emerald-900">
+          Ballot already submitted
+        </h1>
+        <p className="mt-2 text-sm text-stone-600">
+          Your vote for “{election.title}” is already recorded. Voting again is
+          restricted for this election.
+        </p>
+        <Link
+          to={roleBasePath('voter')}
+          className="mt-6 inline-block text-red-700 hover:text-red-800"
+        >
           ← Voter dashboard
         </Link>
       </div>

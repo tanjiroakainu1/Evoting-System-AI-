@@ -148,7 +148,54 @@ export function PositionsManagementPage() {
         <p className="mt-1 text-sm text-stone-500">
           {positions.length} position{positions.length === 1 ? '' : 's'}
         </p>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200">
+        <div className="mt-4 space-y-3 md:hidden">
+          {positions.map((p) => (
+            <article
+              key={p.id}
+              className="rounded-xl border border-stone-200 bg-stone-50 p-4"
+            >
+              {editingId === p.id ? (
+                <input
+                  value={editingTitle}
+                  onChange={(e) => setEditingTitle(e.target.value)}
+                  className={fieldClass}
+                />
+              ) : (
+                <p className="font-medium text-stone-800">{p.title}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {editingId === p.id ? (
+                  <>
+                    <button type="button" onClick={saveEdit} className={btn}>
+                      Save changes
+                    </button>
+                    <button type="button" onClick={cancelEdit} className={btn}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => startEdit(p.id, p.title)}
+                      className={btn}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(p.id, p.title)}
+                      className={btnDanger}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
           <table className="w-full min-w-[32rem] text-left text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wider text-stone-500">

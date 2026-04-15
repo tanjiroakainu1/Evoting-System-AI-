@@ -1,6 +1,11 @@
 import type { User } from '../types/user'
 import { ROLE_LABELS, type AppRole } from '../types/roles'
 import { assertNewPasswordPair } from './registrationValidate'
+import {
+  deleteMirroredUser,
+  ensureSupabaseAuthUser,
+  mirrorUsers,
+} from './supabase/mirror'
 
 const USERS_KEY = 'bevms_users'
 const SESSION_KEY = 'bevms_session_user_id'
@@ -99,7 +104,16 @@ export const defaultSeed: User[] = [
     role: 'voter',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Information Technology',
+    year: '3rd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
     barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
     precinct: 'Demo Precinct 001',
   },
   {
@@ -110,7 +124,16 @@ export const defaultSeed: User[] = [
     role: 'voter',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Information Technology',
+    year: '2nd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
     barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
     precinct: 'Demo Precinct 002',
   },
   {
@@ -121,7 +144,16 @@ export const defaultSeed: User[] = [
     role: 'voter',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Entrepreneurship',
+    year: '1st Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
     barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
     precinct: 'Demo Precinct 003',
   },
   {
@@ -132,7 +164,16 @@ export const defaultSeed: User[] = [
     role: 'voter',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Civil Engineering',
+    year: '4th Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Irregular',
     barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
     precinct: 'Demo Precinct 004',
   },
   {
@@ -143,6 +184,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Information Technology',
+    year: '3rd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
   {
     id: 'seed-cand-test',
@@ -152,6 +203,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Information Technology',
+    year: '4th Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
   {
     id: 'seed-cand-alpha',
@@ -161,6 +222,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Accountancy',
+    year: '3rd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
   {
     id: 'seed-cand-beta',
@@ -170,6 +241,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Hospitality Management',
+    year: '2nd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
   {
     id: 'seed-cand-gamma',
@@ -179,6 +260,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Criminology',
+    year: '3rd Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
   {
     id: 'seed-cand-delta',
@@ -188,6 +279,16 @@ export const defaultSeed: User[] = [
     role: 'candidate',
     password: '123',
     registrationStatus: 'approved',
+    accountType: 'Student',
+    campus: 'Tagudin Campus',
+    course: 'BS Psychology',
+    year: '4th Year',
+    academicYear: '2025-2026',
+    semester: '2nd Semester',
+    studentStatus: 'Regular',
+    barangay: 'Tagudin',
+    townCity: 'Tagudin',
+    province: 'Ilocos Sur',
   },
 ]
 
@@ -221,7 +322,7 @@ function mergeMissingDemoUsers(users: User[]): User[] {
     }
   }
   if (changed) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(merged))
+    writeUsers(merged)
   }
   return merged
 }
@@ -288,12 +389,12 @@ function readUsers(): User[] {
   try {
     const raw = localStorage.getItem(USERS_KEY)
     if (!raw) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(defaultSeed))
+      writeUsers([...defaultSeed])
       return ensureProfileDisplayIds([...defaultSeed])
     }
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(defaultSeed))
+      writeUsers([...defaultSeed])
       return ensureProfileDisplayIds([...defaultSeed])
     }
     const asUsers = parsed as User[]
@@ -301,17 +402,18 @@ function readUsers(): User[] {
     const r2 = migrateDemoEmailsAndIds(r1.list)
     const list = r2.list
     if (r1.changed || r2.changed) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(list))
+      writeUsers(list)
     }
     return ensureProfileDisplayIds(mergeMissingDemoUsers(list))
   } catch {
-    localStorage.setItem(USERS_KEY, JSON.stringify(defaultSeed))
+    writeUsers([...defaultSeed])
     return ensureProfileDisplayIds([...defaultSeed])
   }
 }
 
 function writeUsers(users: User[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
+  void mirrorUsers(users)
 }
 
 export function getAllUsers(): User[] {
@@ -379,6 +481,12 @@ export function addUser(user: User) {
       : { ...user, profileDisplayId: allocateUniqueProfileDisplayId(users) }
   users.push(withId)
   writeUsers(users)
+  void ensureSupabaseAuthUser({
+    email: withId.email,
+    password: withId.password,
+    fullName: withId.fullName,
+    role: withId.role,
+  })
   emitUsersChanged()
 }
 
@@ -421,6 +529,7 @@ export function deleteUserById(
   if (idx < 0) throw new Error('User not found.')
   users.splice(idx, 1)
   writeUsers(users)
+  void deleteMirroredUser(userId)
   emitUsersChanged()
 }
 

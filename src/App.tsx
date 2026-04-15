@@ -19,7 +19,11 @@ import { ElectionResultsPage } from './roles/admin/ElectionResultsPage'
 import { ElectionResultDetailPage } from './roles/admin/ElectionResultDetailPage'
 import { CampaignApplicationsReviewPage } from './roles/admin/CampaignApplicationsReviewPage'
 import { CandidateCampaignApplicationPage } from './roles/candidate/CandidateCampaignApplicationPage'
+import { CandidateApplicationHistoryPage } from './roles/candidate/CandidateApplicationHistoryPage'
+import { AdminVoteSubmissionLogsPage } from './roles/admin/AdminVoteSubmissionLogsPage'
 import { VoterVotePage } from './roles/voter/VoterVotePage'
+import { VoterElectionsPage } from './roles/voter/VoterElectionsPage'
+import { VoterBallotHistoryPage } from './roles/voter/VoterBallotHistoryPage'
 
 function AdminShell() {
   return (
@@ -89,12 +93,15 @@ export default function App() {
               path="campaign-applications"
               element={<CampaignApplicationsReviewPage />}
             />
+            <Route path="vote-logs" element={<AdminVoteSubmissionLogsPage />} />
           </Route>
 
           <Route path="/voter" element={<VoterShell />}>
             <Route index element={<DashboardPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="elections" element={<VoterElectionsPage />} />
             <Route path="vote/:electionId" element={<VoterVotePage />} />
+            <Route path="ballot-history" element={<VoterBallotHistoryPage />} />
           </Route>
 
           <Route path="/candidate" element={<CandidateShell />}>
@@ -103,6 +110,10 @@ export default function App() {
             <Route
               path="campaign/application"
               element={<CandidateCampaignApplicationPage />}
+            />
+            <Route
+              path="campaign/history"
+              element={<CandidateApplicationHistoryPage />}
             />
           </Route>
 

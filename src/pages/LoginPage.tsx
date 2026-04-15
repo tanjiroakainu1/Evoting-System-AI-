@@ -151,8 +151,7 @@ export function LoginPage() {
           </h2>
           <p className="mt-1 text-xs text-stone-500">
             Preloaded users for each role. Click a role to fill the form—only
-            visible on this sign-in page. New accounts created via Register use
-            an 8-character password; demo logins below may use other lengths.
+            visible on this sign-in page.
           </p>
           <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 shadow-inner shadow-stone-200/50">
             <table className="w-full min-w-[20rem] text-left text-sm">
@@ -170,7 +169,7 @@ export function LoginPage() {
               <tbody>
                 {demoRows.map((row) => (
                   <tr
-                    key={row.role}
+                    key={`${row.role}-${row.email}`}
                     className="border-b border-stone-200/80 transition-colors last:border-0 hover:bg-red-50"
                   >
                     <td className="px-3 py-2.5">

@@ -234,8 +234,7 @@ export function RoleProfileSettings({
           Change password
         </h2>
         <p className="mt-1 text-sm text-stone-500">
-          New password must be exactly 8 characters (same rule as
-          registration).
+          Use a secure password for this account.
         </p>
 
         <div className="mt-6 max-w-md space-y-4">
@@ -260,7 +259,7 @@ export function RoleProfileSettings({
               htmlFor="profile-new-password"
               className="text-xs font-medium uppercase tracking-wide text-red-800/85"
             >
-              New password (8 characters)
+              New password
             </label>
             <input
               id="profile-new-password"

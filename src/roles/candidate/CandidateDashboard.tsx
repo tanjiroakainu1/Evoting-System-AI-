@@ -18,12 +18,20 @@ export function CandidateDashboard() {
           ballot; you can attach an optional campaign photo and track status
           below.
         </p>
-        <Link
-          to={rolePath('candidate', 'campaign', 'application')}
-          className="mt-6 inline-flex rounded-xl border border-red-600 bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800"
-        >
-          Campaign application
-        </Link>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to={rolePath('candidate', 'campaign', 'application')}
+            className="inline-flex rounded-xl border border-red-600 bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800"
+          >
+            Campaign application
+          </Link>
+          <Link
+            to={rolePath('candidate', 'campaign', 'history')}
+            className="inline-flex rounded-xl border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-700 hover:border-red-300 hover:text-red-800"
+          >
+            Application history
+          </Link>
+        </div>
       </div>
 
       {user ? (

@@ -9,6 +9,14 @@ import type {
 import { getElectionLifecycleStatus } from '../types/election'
 import { findUserById, getAllUsers } from './authStorage'
 import {
+  mirrorBallotPositions,
+  mirrorBallotVotes,
+  mirrorCampaignApplications,
+  mirrorElections,
+  mirrorEnrollments,
+  mirrorOfficialResultsReleases,
+} from './supabase/mirror'
+import {
   appendElectionActivityLog,
   type ElectionActivityActor,
   type ElectionActivityActorRole,
@@ -42,7 +50,6 @@ export const defaultPositionSeeds: BallotPosition[] = [
   { id: 'seed-pos-secretary', title: 'Secretary' },
   { id: 'seed-pos-treasurer', title: 'Treasurer' },
   { id: 'seed-pos-auditor', title: 'Auditor' },
-  { id: 'seed-pos-raminder', title: 'Raminder' },
 ]
 
 const demoElection: ElectionRecord = {
@@ -76,11 +83,12 @@ const sampleActiveElection: ElectionRecord = {
   id: 'seed-sample-active-election',
   displayId: 1843,
   electionPin: '628401',
-  title: 'sadasdasd',
-  description: 'Sample active election window (demo seed).',
-  organizationType: 'General Assembly',
+  title: 'Demo: Campus Leadership Election (Active)',
+  description:
+    'Live demo election with approved candidates and seeded votes for result flow.',
+  organizationType: 'Supreme Student Council',
   votingVenue: 'Tagudin Campus',
-  policies: 'One vote per office. Demo record.',
+  policies: 'One vote per office. Seeded for end-to-end voting demonstration.',
   startAt: new Date('2026-04-15T03:24:00').toISOString(),
   endAt: new Date('2026-05-14T03:24:00').toISOString(),
   positionIds: [
@@ -106,6 +114,13 @@ const DEMO_SEED_APP = {
   vpDelta: 'seed-app-demo-vp-delta',
 } as const
 
+const ACTIVE_SEED_APP = {
+  presMain: '40000000-0000-0000-0000-000000000201',
+  presAlt: '40000000-0000-0000-0000-000000000202',
+  vpMain: '40000000-0000-0000-0000-000000000203',
+  vpAlt: '40000000-0000-0000-0000-000000000204',
+} as const
+
 const DEMO_VOTE_VOTER_ORDER = [
   'seed-voter',
   'seed-voter-two',
@@ -120,23 +135,32 @@ function readPositions(): BallotPosition[] {
   try {
     const raw = localStorage.getItem(POSITIONS_KEY)
     if (!raw) {
-      localStorage.setItem(POSITIONS_KEY, JSON.stringify(defaultPositionSeeds))
+      writePositions([...defaultPositionSeeds])
       return [...defaultPositionSeeds]
     }
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(POSITIONS_KEY, JSON.stringify(defaultPositionSeeds))
+      writePositions([...defaultPositionSeeds])
       return [...defaultPositionSeeds]
     }
-    return parsed as BallotPosition[]
+    const rows = parsed as BallotPosition[]
+    const cleaned = rows.filter(
+      (p) => p.title.trim().toLowerCase() !== 'raminder',
+    )
+    if (cleaned.length !== rows.length) {
+      writePositions(cleaned)
+      return cleaned
+    }
+    return rows
   } catch {
-    localStorage.setItem(POSITIONS_KEY, JSON.stringify(defaultPositionSeeds))
+    writePositions([...defaultPositionSeeds])
     return [...defaultPositionSeeds]
   }
 }
 
 function writePositions(positions: BallotPosition[]) {
   localStorage.setItem(POSITIONS_KEY, JSON.stringify(positions))
+  void mirrorBallotPositions(positions)
 }
 
 function mergeMissingSeedElections(list: ElectionRecord[]): ElectionRecord[] {
@@ -185,6 +209,39 @@ function normalizeElectionsList(list: ElectionRecord[]): ElectionRecord[] {
   return next
 }
 
+function migrateLegacyActiveSeedElection(
+  list: ElectionRecord[],
+): { rows: ElectionRecord[]; changed: boolean } {
+  let changed = false
+  const withoutLegacyTitle = list.filter((e) => {
+    const title = typeof e.title === 'string' ? e.title.trim().toLowerCase() : ''
+    const isLegacyTitle = title === 'sadasdasd'
+    const keep = !isLegacyTitle || e.id === sampleActiveElection.id
+    if (!keep) changed = true
+    return keep
+  })
+  const rows = withoutLegacyTitle.map((e) => {
+    if (e.id !== sampleActiveElection.id) return e
+    const needsUpdate =
+      e.title === 'sadasdasd' ||
+      e.organizationType === 'General Assembly' ||
+      e.description === 'Sample active election window (demo seed).'
+    if (!needsUpdate) return e
+    changed = true
+    return {
+      ...e,
+      title: sampleActiveElection.title,
+      description: sampleActiveElection.description,
+      organizationType: sampleActiveElection.organizationType,
+      votingVenue: sampleActiveElection.votingVenue,
+      policies: sampleActiveElection.policies,
+      positionIds: [...sampleActiveElection.positionIds],
+      positionTitles: [...sampleActiveElection.positionTitles],
+    }
+  })
+  return { rows, changed }
+}
+
 function syncVoterEnrollmentsForElection(electionId: string): void {
   const voters = getAllUsers().filter(
     (u) =>
@@ -230,6 +287,11 @@ function readElections(): ElectionRecord[] {
         list = mergeMissingSeedElections(parsed as ElectionRecord[])
       }
     }
+    const legacy = migrateLegacyActiveSeedElection(list)
+    if (legacy.changed) {
+      writeElections(legacy.rows)
+      list = legacy.rows
+    }
     list = migrateElectionPins(list)
     list = normalizeElectionsList(list)
     for (const seed of SEED_ELECTIONS) {
@@ -250,6 +312,7 @@ function readElections(): ElectionRecord[] {
 
 function writeElections(elections: ElectionRecord[]) {
   localStorage.setItem(ELECTIONS_KEY, JSON.stringify(elections))
+  void mirrorElections(elections)
 }
 
 /** Assign a 6-digit election PIN to any row missing a valid one (localStorage migration). */
@@ -320,6 +383,7 @@ function readEnrollments(): ElectionVoterEnrollment[] {
 
 function writeEnrollments(rows: ElectionVoterEnrollment[]) {
   localStorage.setItem(ENROLLMENTS_KEY, JSON.stringify(rows))
+  void mirrorEnrollments(rows)
 }
 
 function readApplications(): CampaignApplicationRecord[] {
@@ -336,6 +400,7 @@ function readApplications(): CampaignApplicationRecord[] {
 
 function writeApplications(rows: CampaignApplicationRecord[]) {
   localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(rows))
+  void mirrorCampaignApplications(rows)
 }
 
 function readVotes(): BallotVoteRecord[] {
@@ -352,6 +417,7 @@ function readVotes(): BallotVoteRecord[] {
 
 function writeVotes(rows: BallotVoteRecord[]) {
   localStorage.setItem(VOTES_KEY, JSON.stringify(rows))
+  void mirrorBallotVotes(rows)
 }
 
 function readOfficialResultsReleases(): OfficialResultsRelease[] {
@@ -368,6 +434,7 @@ function readOfficialResultsReleases(): OfficialResultsRelease[] {
 
 function writeOfficialResultsReleases(rows: OfficialResultsRelease[]) {
   localStorage.setItem(OFFICIAL_RESULTS_KEY, JSON.stringify(rows))
+  void mirrorOfficialResultsReleases(rows)
 }
 
 function purgeBallotDataForElection(electionId: string): void {
@@ -495,25 +562,138 @@ function buildSeedVotes(
 
 function ensureDemoBallotSeed(elections: ElectionRecord[]): void {
   const demo = elections.find((e) => e.id === demoElection.id)
-  if (!demo || !Array.isArray(demo.positionIds) || demo.positionIds.length < 2) {
-    return
-  }
-  const presId = demo.positionIds[0]!
-  const vpId = demo.positionIds[1]!
-
   let apps = readApplications()
-  if (!apps.some((a) => a.id === DEMO_SEED_APP.presTest)) {
-    apps = [...apps, ...buildApprovedSeedApplications(demo, presId, vpId)]
-    writeApplications(apps)
-    emitElectionsChanged()
+  let appsChanged = false
+  if (demo && Array.isArray(demo.positionIds) && demo.positionIds.length >= 2) {
+    const presId = demo.positionIds[0]!
+    const vpId = demo.positionIds[1]!
+    if (!apps.some((a) => a.id === DEMO_SEED_APP.presTest)) {
+      apps = [...apps, ...buildApprovedSeedApplications(demo, presId, vpId)]
+      appsChanged = true
+    }
   }
+
+  const active = elections.find((e) => e.id === sampleActiveElection.id)
+  if (
+    active &&
+    Array.isArray(active.positionIds) &&
+    active.positionIds.length >= 2 &&
+    !apps.some((a) => a.id === ACTIVE_SEED_APP.presMain)
+  ) {
+    const presId = active.positionIds[0]!
+    const vpId = active.positionIds[1]!
+    const createdAt = new Date('2026-04-02T10:00:00').toISOString()
+    const reviewedAt = new Date('2026-04-03T09:10:00').toISOString()
+    apps = [
+      ...apps,
+      {
+        id: ACTIVE_SEED_APP.presMain,
+        electionId: active.id,
+        candidateUserId: 'seed-candidate',
+        positionId: presId,
+        platform: SEED_PLATFORM,
+        ballotPhotoDataUrl: null,
+        status: 'approved',
+        createdAt,
+        reviewedAt,
+        reviewedByUserId: 'seed-mis-office',
+        reviewedByName: 'MIS Office',
+      },
+      {
+        id: ACTIVE_SEED_APP.presAlt,
+        electionId: active.id,
+        candidateUserId: 'seed-cand-beta',
+        positionId: presId,
+        platform: SEED_PLATFORM,
+        ballotPhotoDataUrl: null,
+        status: 'approved',
+        createdAt,
+        reviewedAt,
+        reviewedByUserId: 'seed-mis-office',
+        reviewedByName: 'MIS Office',
+      },
+      {
+        id: ACTIVE_SEED_APP.vpMain,
+        electionId: active.id,
+        candidateUserId: 'seed-cand-gamma',
+        positionId: vpId,
+        platform: SEED_PLATFORM,
+        ballotPhotoDataUrl: null,
+        status: 'approved',
+        createdAt,
+        reviewedAt,
+        reviewedByUserId: 'seed-osa-office',
+        reviewedByName: 'OSA Office',
+      },
+      {
+        id: ACTIVE_SEED_APP.vpAlt,
+        electionId: active.id,
+        candidateUserId: 'seed-cand-delta',
+        positionId: vpId,
+        platform: SEED_PLATFORM,
+        ballotPhotoDataUrl: null,
+        status: 'approved',
+        createdAt,
+        reviewedAt,
+        reviewedByUserId: 'seed-osa-office',
+        reviewedByName: 'OSA Office',
+      },
+    ]
+    appsChanged = true
+  }
+  if (appsChanged) writeApplications(apps)
 
   let votes = readVotes()
-  if (!votes.some((v) => v.electionId === demo.id)) {
-    votes = [...votes, ...buildSeedVotes(demo.id, presId, vpId)]
-    writeVotes(votes)
-    emitElectionsChanged()
+  let votesChanged = false
+  if (demo && Array.isArray(demo.positionIds) && demo.positionIds.length >= 2) {
+    const presId = demo.positionIds[0]!
+    const vpId = demo.positionIds[1]!
+    if (!votes.some((v) => v.electionId === demo.id)) {
+      votes = [...votes, ...buildSeedVotes(demo.id, presId, vpId)]
+      votesChanged = true
+    }
   }
+  if (active && Array.isArray(active.positionIds) && active.positionIds.length >= 2) {
+    const activePresId = active.positionIds[0]!
+    const activeVpId = active.positionIds[1]!
+    if (!votes.some((v) => v.electionId === active.id)) {
+      const castAt = new Date('2026-04-16T08:45:00').toISOString()
+      votes = [
+        ...votes,
+        {
+          electionId: active.id,
+          voterUserId: 'seed-voter',
+          positionId: activePresId,
+          applicationId: ACTIVE_SEED_APP.presMain,
+          castAt,
+        },
+        {
+          electionId: active.id,
+          voterUserId: 'seed-voter',
+          positionId: activeVpId,
+          applicationId: ACTIVE_SEED_APP.vpMain,
+          castAt,
+        },
+        {
+          electionId: active.id,
+          voterUserId: 'seed-voter-two',
+          positionId: activePresId,
+          applicationId: ACTIVE_SEED_APP.presAlt,
+          castAt,
+        },
+        {
+          electionId: active.id,
+          voterUserId: 'seed-voter-two',
+          positionId: activeVpId,
+          applicationId: ACTIVE_SEED_APP.vpMain,
+          castAt,
+        },
+      ]
+      votesChanged = true
+    }
+  }
+  if (votesChanged) writeVotes(votes)
+  if (appsChanged || votesChanged) emitElectionsChanged()
 }
 
 function nextDisplayId(elections: ElectionRecord[]): number {
@@ -954,14 +1134,10 @@ export function submitCampaignApplication(input: {
   const dup = apps.some(
     (a) =>
       a.electionId === input.electionId &&
-      a.candidateUserId === input.candidateUserId &&
-      a.positionId === input.positionId &&
-      (a.status === 'pending' || a.status === 'approved'),
+      a.candidateUserId === input.candidateUserId,
   )
   if (dup) {
-    throw new Error(
-      'You already have a pending or approved application for this office.',
-    )
+    throw new Error('You already applied for this election.')
   }
   const row: CampaignApplicationRecord = {
     id: crypto.randomUUID(),
@@ -1056,6 +1232,15 @@ export function getVoterBallotSelections(
   return map
 }
 
+export function hasVoterSubmittedBallot(
+  electionId: string,
+  voterUserId: string,
+): boolean {
+  return readVotes().some(
+    (v) => v.electionId === electionId && v.voterUserId === voterUserId,
+  )
+}
+
 export function castBallotVotes(input: {
   electionId: string
   voterUserId: string
@@ -1069,6 +1254,15 @@ export function castBallotVotes(input: {
   }
   if (!getEnrollmentForVoter(input.electionId, input.voterUserId)) {
     throw new Error('You are not enrolled in this election.')
+  }
+  const voter = findUserById(input.voterUserId)
+  if (!voter || voter.role !== 'voter') {
+    throw new Error('Only voter accounts can submit ballots.')
+  }
+  if (hasVoterSubmittedBallot(input.electionId, input.voterUserId)) {
+    throw new Error(
+      'You have already submitted your ballot for this election. Voting again is restricted.',
+    )
   }
   const apps = readApplications()
   const positionIds = new Set(election.positionIds)
@@ -1095,13 +1289,7 @@ export function castBallotVotes(input: {
       throw new Error('Invalid candidate selection.')
     }
   }
-  const votes = readVotes().filter(
-    (v) =>
-      !(
-        v.electionId === input.electionId &&
-        v.voterUserId === input.voterUserId
-      ),
-  )
+  const votes = readVotes()
   for (const pid of election.positionIds) {
     votes.push({
       electionId: input.electionId,
@@ -1112,6 +1300,16 @@ export function castBallotVotes(input: {
     })
   }
   writeVotes(votes)
+  appendElectionActivityLog({
+    action: 'vote_cast',
+    electionId: election.id,
+    electionDisplayId: election.displayId,
+    electionTitle: election.title,
+    actorUserId: voter.id,
+    actorEmail: voter.email,
+    actorRole: 'voter',
+    detail: `Submitted ${election.positionIds.length} ballot choice(s).`,
+  })
   emitElectionsChanged()
 }
 

@@ -365,7 +365,7 @@ export function RoleManagementConsole({
             <span className="font-medium text-red-800/90">
               {ROLE_LABELS[managedRole]}
             </span>
-            . Password must be exactly 8 characters.
+            . Set a secure password for this account.
           </p>
         </div>
 
@@ -409,7 +409,86 @@ export function RoleManagementConsole({
           {ROLE_LABELS[managedRole].toLowerCase()}
           {directory.length === 1 ? '' : 's'} (pending requests appear above)
         </p>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200">
+        <div className="mt-4 space-y-3 md:hidden">
+          {directory.length === 0 ? (
+            <p className="rounded-xl border border-stone-200 bg-white px-4 py-6 text-center text-sm text-stone-500">
+              No records yet.
+            </p>
+          ) : null}
+          {directory.map((u) => (
+            <article
+              key={u.id}
+              className="rounded-xl border border-stone-200 bg-stone-50 p-4"
+            >
+              <div className="flex items-center gap-3">
+                {u.profilePhotoDataUrl ? (
+                  <img
+                    src={u.profilePhotoDataUrl}
+                    alt=""
+                    className="h-10 w-10 rounded-lg border border-stone-200 object-cover"
+                  />
+                ) : (
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white text-xs text-stone-600">
+                    —
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-stone-800">{u.fullName}</p>
+                  <p className="truncate text-xs text-stone-500">{u.email}</p>
+                </div>
+              </div>
+              <div className="mt-3 space-y-1 text-xs text-stone-500">
+                <p>
+                  Account type:{' '}
+                  <span className="text-stone-700">{u.accountType ?? '—'}</span>
+                </p>
+                <p>
+                  Campus: <span className="text-stone-700">{u.campus ?? '—'}</span>
+                </p>
+                <p>
+                  Course: <span className="text-stone-700">{u.course ?? '—'}</span>
+                </p>
+                <p>
+                  Status:{' '}
+                  <span
+                    className={
+                      u.registrationStatus === 'rejected'
+                        ? 'text-red-700'
+                        : 'text-stone-700'
+                    }
+                  >
+                    {registrationStatusLabel(u)}
+                  </span>
+                </p>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDetailsUser(u)}
+                  className={btnSecondary}
+                >
+                  View details
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openEdit(u)}
+                  className={btnPrimary}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDelete(u)}
+                  disabled={actingUser?.id === u.id}
+                  className={`${btnDanger} disabled:cursor-not-allowed disabled:opacity-40`}
+                >
+                  Delete
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
           <table className="w-full min-w-[56rem] text-left text-sm">
             <thead>
               <tr className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wider text-stone-500">

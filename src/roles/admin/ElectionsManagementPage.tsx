@@ -335,8 +335,76 @@ export function ElectionsManagementPage(props?: {
           <span className="text-stone-400">View details</span> for full info, QR
           code, and edits (when not completed).
         </p>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200">
-          <table className="w-full min-w-[72rem] table-fixed border-collapse text-left text-sm">
+        <div className="mt-4 space-y-3 md:hidden">
+          {elections.length === 0 ? (
+            <p className="rounded-xl border border-stone-200 bg-white px-4 py-6 text-center text-sm text-stone-500">
+              No elections yet. Use{' '}
+              <span className="text-stone-400">Create new election</span> below.
+            </p>
+          ) : (
+            elections.map((el) => {
+              const st = getElectionLifecycleStatus(el)
+              return (
+                <article
+                  key={el.id}
+                  className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
+                >
+                  <p className="font-mono text-xs text-stone-500">ID {el.displayId}</p>
+                  <h3 className="mt-1 font-medium text-stone-800">{el.title}</h3>
+                  <p className="mt-1 text-xs text-stone-500">{el.organizationType}</p>
+                  <div className="mt-3 space-y-1 text-xs text-stone-500">
+                    <p>Start: {formatElectionDateTimeCell(el.startAt)}</p>
+                    <p>End: {formatElectionDateTimeCell(el.endAt)}</p>
+                    <p className="font-mono text-red-800/90">
+                      Election PIN: {el.electionPin}
+                    </p>
+                  </div>
+                  <p
+                    className={`mt-2 text-sm ${
+                      st === 'active'
+                        ? 'text-red-800'
+                        : st === 'completed'
+                          ? 'text-stone-500'
+                          : 'text-amber-800'
+                    }`}
+                  >
+                    {electionStatusLabel(st)}
+                    {el.manualCompletedAt ? (
+                      <span className="ml-1 text-xs text-stone-600">backup</span>
+                    ) : null}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {st !== 'completed' ? (
+                      <button
+                        type="button"
+                        onClick={() => onMarkCompleteBackup(el.id, el.title)}
+                        className={btnComplete}
+                      >
+                        Complete
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => openDetail(el.id)}
+                      className={btnPrimary}
+                    >
+                      View details
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDeleteElection(el.id, el.title)}
+                      className={btnDanger}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              )
+            })
+          )}
+        </div>
+        <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
+          <table className="w-full min-w-[64rem] table-fixed border-collapse text-left text-sm">
             <colgroup>
               <col className="w-[4.5rem]" />
               <col />
@@ -710,7 +778,23 @@ export function ElectionsManagementPage(props?: {
         ) : null}
         {pinsElection && pinsRows.length > 0 ? (
           <>
-            <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200">
+            <div className="mt-4 space-y-3 md:hidden">
+              {pinsRows.map((r) => (
+                <article
+                  key={`${r.electionId}-${r.userId}`}
+                  className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
+                >
+                  <p className="font-medium text-stone-800">{r.voterName}</p>
+                  <p className="mt-1 break-all text-xs text-stone-500">
+                    {r.voterEmail}
+                  </p>
+                  <p className="mt-2 font-mono text-sm tracking-wide text-red-800/90">
+                    PIN: {r.pin}
+                  </p>
+                </article>
+              ))}
+            </div>
+            <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
               <table className="w-full min-w-[36rem] table-fixed border-collapse text-left text-sm">
                 <colgroup>
                   <col className="w-[28%]" />

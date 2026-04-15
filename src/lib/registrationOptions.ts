@@ -33,3 +33,5 @@ export const STUDENT_STATUSES = [
 ] as const
 
 export const SEMESTERS = ['', '1st Semester', '2nd Semester', 'Summer'] as const
+
+export const YEAR_LEVELS = ['', '1st Year', '2nd Year', '3rd Year', '4th Year'] as const

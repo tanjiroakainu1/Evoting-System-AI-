@@ -146,7 +146,45 @@ export function ElectionResultDetailPage(props?: {
           <h2 className="font-display text-lg font-semibold text-red-900">
             {block.positionTitle}
           </h2>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200">
+          <div className="mt-4 space-y-3 md:hidden">
+            {block.rows.map((row) => (
+              <article
+                key={row.applicationId}
+                className="rounded-xl border border-stone-200 bg-stone-50 p-3"
+              >
+                <div className="flex items-center gap-3">
+                  {row.ballotPhotoDataUrl ? (
+                    <img
+                      src={row.ballotPhotoDataUrl}
+                      alt=""
+                      className="h-10 w-10 rounded-lg object-cover ring-1 ring-red-950/50"
+                    />
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-xs text-stone-600">
+                      —
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-stone-800">
+                      {row.candidateName}
+                    </p>
+                    <p className="text-xs text-stone-500">Rank #{row.rank}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-sm">
+                  <span className="font-mono text-red-800/90">{row.votes} votes</span>
+                  <span className="text-stone-500">{row.percentage}%</span>
+                </div>
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-red-700 to-red-500/90 transition-all"
+                    style={{ width: `${Math.min(100, row.percentage)}%` }}
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
             <table className="w-full min-w-[36rem] text-left text-sm">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wider text-stone-500">

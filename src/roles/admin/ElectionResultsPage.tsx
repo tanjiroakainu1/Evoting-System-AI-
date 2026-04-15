@@ -55,8 +55,58 @@ export function ElectionResultsPage(props?: {
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-stone-200">
-        <table className="w-full min-w-[56rem] text-left text-sm">
+      <div className="space-y-3 md:hidden">
+        {elections.length === 0 ? (
+          <p className="rounded-xl border border-stone-200 bg-white px-4 py-6 text-center text-sm text-stone-500">
+            No elections available.
+          </p>
+        ) : null}
+        {elections.map((el) => {
+          const st = getElectionLifecycleStatus(el)
+          const detail = getElectionResultsDetail(el.id)
+          return (
+            <article
+              key={el.id}
+              className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
+            >
+              <h3 className="font-medium text-stone-800">{el.title}</h3>
+              <p className="mt-2 text-xs text-stone-500">
+                Start: {formatElectionDateTimeCell(el.startAt)}
+              </p>
+              <p className="text-xs text-stone-500">
+                End: {formatElectionDateTimeCell(el.endAt)}
+              </p>
+              <p
+                className={`mt-2 text-sm ${
+                  st === 'active'
+                    ? 'text-red-800'
+                    : st === 'completed'
+                      ? 'text-stone-500'
+                      : 'text-amber-800'
+                }`}
+              >
+                {electionStatusLabel(st)}
+              </p>
+              <div className="mt-3 flex flex-col gap-2">
+                <Link
+                  to={rolePath(pathRole as AppRole, 'election-results', el.id)}
+                  className={`${btnPrimary} justify-center text-center`}
+                >
+                  View results
+                </Link>
+                {detail ? (
+                  <ElectionResultsExportButtons detail={detail} />
+                ) : (
+                  <p className="text-xs text-stone-600">No results data</p>
+                )}
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-xl border border-stone-200 md:block">
+        <table className="w-full min-w-[52rem] text-left text-sm">
           <thead>
             <tr className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wider text-stone-500">
               <th className="px-3 py-3 font-medium text-red-800/80">

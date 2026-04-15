@@ -1,0 +1,123 @@
+-- 92_seed_demo_flow.sql
+-- End-to-end demo operational data:
+-- voter enrollments, approved campaign applications, votes, and cross-role logs.
+
+insert into public.election_voter_enrollments (
+  election_id,
+  user_id,
+  voter_email,
+  voter_name,
+  pin
+)
+values
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000010', 'voter@gmail.com', 'Demo Voter', null),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000011', 'votertwo@gmail.com', 'Demo Voter Two', null),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000012', 'voterthree@gmail.com', 'Demo Voter Three', null),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000013', 'voterfour@gmail.com', 'Demo Voter Four', null),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000010', 'voter@gmail.com', 'Demo Voter', null),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000011', 'votertwo@gmail.com', 'Demo Voter Two', null),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000012', 'voterthree@gmail.com', 'Demo Voter Three', null),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000013', 'voterfour@gmail.com', 'Demo Voter Four', null)
+on conflict (election_id, user_id) do update
+set
+  voter_email = excluded.voter_email,
+  voter_name = excluded.voter_name;
+
+insert into public.campaign_applications (
+  id,
+  election_id,
+  candidate_user_id,
+  position_id,
+  platform,
+  ballot_photo_data_url,
+  status,
+  created_at,
+  reviewed_at,
+  reviewed_by_user_id,
+  reviewed_by_name
+)
+values
+  ('40000000-0000-0000-0000-000000000101', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000021', '20000000-0000-0000-0000-000000000001', 'Campus integrity and transparent student governance program.', null, 'approved', '2025-01-08T10:00:00+08', '2025-01-10T12:00:00+08', '10000000-0000-0000-0000-000000000001', 'System Administrator'),
+  ('40000000-0000-0000-0000-000000000102', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000022', '20000000-0000-0000-0000-000000000001', 'Inclusive academic engagement and student welfare platform.', null, 'approved', '2025-01-08T10:30:00+08', '2025-01-10T12:10:00+08', '10000000-0000-0000-0000-000000000001', 'System Administrator'),
+  ('40000000-0000-0000-0000-000000000103', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000024', '20000000-0000-0000-0000-000000000002', 'Student services digitization and campus helpdesk enhancement.', null, 'approved', '2025-01-08T11:00:00+08', '2025-01-10T12:20:00+08', '10000000-0000-0000-0000-000000000001', 'System Administrator'),
+  ('40000000-0000-0000-0000-000000000104', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000025', '20000000-0000-0000-0000-000000000002', 'Co-curricular events and leadership mentoring improvement roadmap.', null, 'approved', '2025-01-08T11:20:00+08', '2025-01-10T12:30:00+08', '10000000-0000-0000-0000-000000000001', 'System Administrator'),
+  ('40000000-0000-0000-0000-000000000201', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000020', '20000000-0000-0000-0000-000000000001', 'Reliable election execution and transparent reporting platform.', null, 'approved', '2026-04-02T10:00:00+08', '2026-04-03T09:00:00+08', '10000000-0000-0000-0000-000000000002', 'MIS Office'),
+  ('40000000-0000-0000-0000-000000000202', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000023', '20000000-0000-0000-0000-000000000001', 'Data-informed budget transparency and student welfare programs.', null, 'approved', '2026-04-02T10:15:00+08', '2026-04-03T09:05:00+08', '10000000-0000-0000-0000-000000000002', 'MIS Office'),
+  ('40000000-0000-0000-0000-000000000203', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000024', '20000000-0000-0000-0000-000000000002', 'Student communication channels and support response acceleration.', null, 'approved', '2026-04-02T10:30:00+08', '2026-04-03T09:10:00+08', '10000000-0000-0000-0000-000000000003', 'OSA Office'),
+  ('40000000-0000-0000-0000-000000000204', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000025', '20000000-0000-0000-0000-000000000002', 'Campus peer mentoring and leadership workshop expansion.', null, 'approved', '2026-04-02T10:45:00+08', '2026-04-03T09:20:00+08', '10000000-0000-0000-0000-000000000003', 'OSA Office')
+on conflict (id) do update
+set
+  election_id = excluded.election_id,
+  candidate_user_id = excluded.candidate_user_id,
+  position_id = excluded.position_id,
+  platform = excluded.platform,
+  ballot_photo_data_url = excluded.ballot_photo_data_url,
+  status = excluded.status,
+  created_at = excluded.created_at,
+  reviewed_at = excluded.reviewed_at,
+  reviewed_by_user_id = excluded.reviewed_by_user_id,
+  reviewed_by_name = excluded.reviewed_by_name;
+
+insert into public.ballot_votes (
+  election_id,
+  voter_user_id,
+  position_id,
+  application_id,
+  cast_at
+)
+values
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000101', '2025-01-18T14:00:00+08'),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000103', '2025-01-18T14:00:00+08'),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000101', '2025-01-18T14:02:00+08'),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000103', '2025-01-18T14:02:00+08'),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000012', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000102', '2025-01-18T14:04:00+08'),
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000012', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000103', '2025-01-18T14:04:00+08'),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000201', '2026-04-16T08:45:00+08'),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000203', '2026-04-16T08:45:00+08'),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000202', '2026-04-16T08:52:00+08'),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000011', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000203', '2026-04-16T08:52:00+08')
+on conflict (election_id, voter_user_id, position_id) do update
+set
+  application_id = excluded.application_id,
+  cast_at = excluded.cast_at;
+
+insert into public.official_results_releases (
+  id,
+  election_id,
+  created_at,
+  created_by_user_id,
+  created_by_email,
+  created_by_role
+)
+values
+  ('50000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '2025-01-20T18:30:00+08', '10000000-0000-0000-0000-000000000001', 'admin@gmail.com', 'admin')
+on conflict (id) do nothing;
+
+insert into public.election_activity_logs (
+  id,
+  action,
+  election_id,
+  election_display_id,
+  election_title,
+  actor_user_id,
+  actor_email,
+  actor_role,
+  created_at
+)
+values
+  ('60000000-0000-0000-0000-000000000001', 'election_create', '30000000-0000-0000-0000-000000000001', 1842, 'Demo: Student Council Election', '10000000-0000-0000-0000-000000000001', 'admin@gmail.com', 'admin', '2025-01-10T10:05:00+08'),
+  ('60000000-0000-0000-0000-000000000002', 'election_update', '30000000-0000-0000-0000-000000000002', 1843, 'Demo: Campus Leadership Election (Active)', '10000000-0000-0000-0000-000000000002', 'misoffice@gmail.com', 'mis_office', '2026-04-03T09:20:00+08'),
+  ('60000000-0000-0000-0000-000000000003', 'results_publish', '30000000-0000-0000-0000-000000000001', 1842, 'Demo: Student Council Election', '10000000-0000-0000-0000-000000000003', 'osaoffice@gmail.com', 'osa_office', '2025-01-20T18:31:00+08'),
+  ('60000000-0000-0000-0000-000000000004', 'vote_cast', '30000000-0000-0000-0000-000000000002', 1843, 'Demo: Campus Leadership Election (Active)', '10000000-0000-0000-0000-000000000010', 'voter@gmail.com', 'voter', '2026-04-16T08:45:00+08'),
+  ('60000000-0000-0000-0000-000000000005', 'vote_cast', '30000000-0000-0000-0000-000000000002', 1843, 'Demo: Campus Leadership Election (Active)', '10000000-0000-0000-0000-000000000011', 'votertwo@gmail.com', 'voter', '2026-04-16T08:52:00+08'),
+  ('60000000-0000-0000-0000-000000000006', 'vote_cast', '30000000-0000-0000-0000-000000000001', 1842, 'Demo: Student Council Election', '10000000-0000-0000-0000-000000000012', 'voterthree@gmail.com', 'voter', '2025-01-18T14:04:00+08')
+on conflict (id) do update
+set
+  action = excluded.action,
+  election_id = excluded.election_id,
+  election_display_id = excluded.election_display_id,
+  election_title = excluded.election_title,
+  actor_user_id = excluded.actor_user_id,
+  actor_email = excluded.actor_email,
+  actor_role = excluded.actor_role,
+  created_at = excluded.created_at;
