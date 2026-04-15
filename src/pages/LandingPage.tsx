@@ -33,7 +33,7 @@ export function LandingPage() {
   return (
     <div className="min-h-svh bg-stone-50 text-stone-800">
       {/* Institutional header */}
-      <header className="relative border-b border-red-950/40 bg-gradient-to-r from-[#140808] via-[#0f0606] to-[#140808] text-white shadow-lg shadow-red-950/25">
+      <header className="relative border-b border-red-800/40 bg-gradient-to-r from-[#5b1f2c] via-[#4b1823] to-[#5b1f2c] text-white shadow-lg shadow-red-900/20">
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,transparent_50%)]"
           aria-hidden

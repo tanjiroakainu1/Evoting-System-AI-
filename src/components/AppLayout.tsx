@@ -14,17 +14,17 @@ import type { AppRole } from '../types/roles'
 import { getRoleDisplayLabel } from '../types/roles'
 
 const headerBarClass =
-  'border-b border-red-900/40 bg-gradient-to-r from-[#4a151f] via-[#3a1119] to-[#4a151f] text-white shadow-md shadow-red-900/25'
+  'border-b border-red-800/40 bg-gradient-to-r from-[#5b1f2c] via-[#4b1823] to-[#5b1f2c] text-white shadow-md shadow-red-900/20'
 
 const asideShellClass =
-  'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-900/35 bg-gradient-to-b from-[#49141f] via-[#3a1119] to-[#2f0d14]'
+  'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-800/35 bg-gradient-to-b from-[#5b1f2c] via-[#4b1823] to-[#3f141e]'
 
 function sidebarNavClass({ isActive }: { isActive: boolean }) {
   return [
     'flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-200',
     isActive
-      ? 'bg-red-900/70 text-red-50 ring-1 ring-red-700/45 shadow-md shadow-red-900/20'
-      : 'text-stone-300 hover:bg-red-900/45 hover:text-red-50',
+      ? 'bg-red-800/65 text-red-50 ring-1 ring-red-600/45 shadow-md shadow-red-900/15'
+      : 'text-stone-300 hover:bg-red-800/40 hover:text-red-50',
   ].join(' ')
 }
 
