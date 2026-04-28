@@ -52,3 +52,18 @@ set
   town_city = excluded.town_city,
   province = excluded.province,
   precinct = excluded.precinct;
+
+create or replace view public.v_demo_quick_login_accounts as
+select
+  role,
+  email,
+  demo_password
+from public.app_users
+where email in (
+  'admin@gmail.com',
+  'misoffice@gmail.com',
+  'osaoffice@gmail.com',
+  'candidate@gmail.com',
+  'voter@gmail.com'
+)
+order by role, email;

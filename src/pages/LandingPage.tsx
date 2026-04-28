@@ -16,16 +16,15 @@ import {
   hero,
   institution,
   keyFeatures,
-  researchTeam,
   systemPurposeBullets,
   systemPurposeIntro,
 } from '../content/landingCopy'
 
 const ctaPrimary =
-  'inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white px-5 py-3 text-sm font-semibold text-red-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-50 hover:shadow-xl active:translate-y-0'
+  'inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white px-5 py-3 text-sm font-semibold tracking-wide text-red-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-50 hover:shadow-xl active:translate-y-0'
 
 const ctaGhost =
-  'inline-flex items-center gap-2 rounded-xl border-2 border-white/85 bg-white/5 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/12 hover:shadow-lg active:translate-y-0'
+  'inline-flex items-center gap-2 rounded-xl border-2 border-white/85 bg-white/10 px-5 py-3 text-sm font-semibold tracking-wide text-white backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/18 hover:shadow-lg active:translate-y-0'
 
 export function LandingPage() {
   const { user } = useAuth()
@@ -33,7 +32,7 @@ export function LandingPage() {
   return (
     <div className="min-h-svh bg-stone-50 text-stone-800">
       {/* Institutional header */}
-      <header className="relative border-b border-red-800/40 bg-gradient-to-r from-[#5b1f2c] via-[#4b1823] to-[#5b1f2c] text-white shadow-lg shadow-red-900/20">
+      <header className="relative border-b border-red-700/35 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] text-white shadow-lg shadow-red-800/20">
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,transparent_50%)]"
           aria-hidden
@@ -45,13 +44,13 @@ export function LandingPage() {
             </div>
           </div>
           <div className="text-center sm:text-left">
-            <p className="text-xs font-medium text-red-900/95 sm:text-sm">
+            <p className="font-display text-xs font-medium tracking-wide text-red-100/95 sm:text-sm">
               {institution.lines[0]}
             </p>
-            <p className="font-display text-lg font-semibold leading-tight tracking-tight text-white sm:text-xl md:text-2xl">
+            <p className="font-display text-lg font-semibold leading-tight tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] sm:text-xl md:text-2xl">
               {institution.lines[1]}
             </p>
-            <p className="text-xs text-red-900/90 sm:text-sm">
+            <p className="font-display text-xs font-medium tracking-wide text-red-100/90 sm:text-sm">
               {institution.lines[2]}
             </p>
           </div>
@@ -96,13 +95,13 @@ export function LandingPage() {
                 <ShieldCheckIcon className="h-7 w-7 text-white sm:h-8 sm:w-8" />
               </div>
               <div>
-                <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl md:leading-[1.1]">
+                <h1 className="font-display text-3xl font-bold tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] sm:text-4xl md:text-5xl md:leading-[1.1]">
                   {hero.title}
                 </h1>
-                <p className="mt-4 text-base font-medium leading-snug text-red-50 sm:text-lg">
+                <p className="font-display mt-4 text-base font-medium leading-snug tracking-wide text-red-50 sm:text-lg">
                   {hero.subtitle}
                 </p>
-                <p className="mt-4 text-sm leading-relaxed text-red-50/92 sm:text-base">
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-red-50/95 sm:text-base">
                   {hero.description}
                 </p>
               </div>
@@ -148,7 +147,7 @@ export function LandingPage() {
           <h3 className="font-display text-lg font-semibold tracking-tight text-red-900">
             Background of the Study
           </h3>
-          <div className="mt-5 space-y-5 text-left text-sm leading-relaxed text-stone-400 sm:text-base">
+          <div className="mt-5 space-y-5 text-left text-sm leading-relaxed text-stone-600 sm:text-base">
             {backgroundOfStudy.split('\n\n').map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -159,10 +158,10 @@ export function LandingPage() {
           <h3 className="font-display text-lg font-semibold tracking-tight text-red-900">
             System Purpose
           </h3>
-          <p className="mt-5 text-sm leading-relaxed text-stone-400 sm:text-base">
+          <p className="mt-5 text-sm leading-relaxed text-stone-600 sm:text-base">
             {systemPurposeIntro}
           </p>
-          <ul className="mt-5 list-disc space-y-2.5 pl-5 text-sm text-stone-400 marker:text-red-500 sm:text-base">
+          <ul className="mt-5 list-disc space-y-2.5 pl-5 text-sm text-stone-600 marker:text-red-500 sm:text-base">
             {systemPurposeBullets.map((item) => (
               <li key={item} className="leading-relaxed">
                 {item}
@@ -198,46 +197,16 @@ export function LandingPage() {
       <section className="border-t border-stone-200 bg-stone-100 px-4 py-16 sm:px-5 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="font-display text-center text-xl font-semibold tracking-tight text-red-800 sm:text-2xl">
-            Development Team
+            Developer
           </h2>
-          <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:gap-14">
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-red-700/90">
-                Institution Information
-              </h3>
-              <dl className="mt-5 space-y-4">
-                {institution.details.map((row) => (
-                  <div
-                    key={row.label}
-                    className="border-b border-stone-200 pb-4 last:border-0"
-                  >
-                    <dt className="text-xs font-medium uppercase tracking-wide text-stone-500">
-                      {row.label}
-                    </dt>
-                    <dd className="mt-1.5 text-sm font-medium leading-snug text-stone-800 sm:text-base">
-                      {row.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-red-700/90">
-                Research Team Members
-              </h3>
-              <ul className="mt-5 space-y-4">
-                {researchTeam.map((member) => (
-                  <li
-                    key={member.name}
-                    className="rounded-2xl border border-stone-200 bg-white p-5 shadow-md shadow-stone-200/50 transition-all duration-200 hover:border-red-300 hover:shadow-lg"
-                  >
-                    <p className="font-display font-semibold text-red-900">
-                      {member.name}
-                    </p>
-                    <p className="mt-1.5 text-sm text-stone-500">{member.role}</p>
-                  </li>
-                ))}
-              </ul>
+          <div className="mx-auto mt-8 max-w-xl">
+            <div className="rounded-2xl border border-stone-200 bg-white p-6 text-center shadow-md shadow-stone-200/50">
+              <p className="font-display text-2xl font-semibold text-red-900">
+                Raminder Jangao
+              </p>
+              <p className="mt-2 text-sm text-stone-500">
+                System Developer
+              </p>
             </div>
           </div>
         </div>

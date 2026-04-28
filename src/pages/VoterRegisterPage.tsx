@@ -76,10 +76,16 @@ export function VoterRegisterPage() {
             Voter / candidate registration
           </p>
         </div>
+        <Link
+          to="/"
+          className="rounded-lg border border-white/35 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+        >
+          Home
+        </Link>
       </InstitutionalTopBar>
       <div className="pointer-events-none fixed inset-0 top-14 bg-[radial-gradient(ellipse_at_top,_rgba(185,28,28,0.08),transparent_55%)] sm:top-16" />
-      <div className="relative mx-auto max-w-4xl flex-1 px-4 py-10 sm:px-5 sm:py-12">
-        <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative mx-auto max-w-4xl flex-1 px-3 py-8 sm:px-5 sm:py-12">
+        <div className="mb-6 flex flex-col items-center gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white shadow-lg shadow-stone-200/50 sm:h-20 sm:w-20">
               <IspscSealGraphic className="h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" />
@@ -91,10 +97,10 @@ export function VoterRegisterPage() {
               <h1 className="font-display text-2xl font-semibold tracking-tight text-red-900 sm:text-3xl">
                 Register
               </h1>
-              <p className="mt-1 text-sm text-stone-500">
+              <p className="mt-1 text-sm font-medium text-stone-600">
                 Create your account to participate in elections
               </p>
-              <p className="mt-2 text-xs text-stone-500">
+              <p className="mt-2 text-xs leading-relaxed text-stone-600">
                 Choose <span className="text-red-800/90">Voter</span> or{' '}
                 <span className="text-red-800/90">Candidate</span>. An
                 administrator must approve your registration before you can sign
@@ -163,7 +169,7 @@ export function VoterRegisterPage() {
 
             <button
               type="submit"
-              className="font-display mt-8 w-full rounded-xl bg-gradient-to-r from-red-600 via-red-800 to-neutral-950 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-red-950/35 transition-all duration-200 hover:from-red-500 hover:shadow-xl active:scale-[0.99]"
+              className="font-display mt-8 w-full rounded-xl bg-gradient-to-r from-red-600 via-red-800 to-neutral-950 py-3 text-sm font-semibold tracking-[0.04em] text-white shadow-lg shadow-red-950/35 transition-all duration-200 hover:from-red-500 hover:shadow-xl active:scale-[0.99]"
             >
               Submit registration
             </button>

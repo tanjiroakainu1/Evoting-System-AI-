@@ -324,6 +324,13 @@ from public.elections e
 left join public.election_voter_enrollments r
   on r.election_id = e.id;
 
+create or replace view public.v_system_assistant_profile as
+select
+  'E-Vote Assistant'::text as assistant_name,
+  'OpenRouter'::text as ai_provider,
+  'Raminder Jangao'::text as developer_name,
+  true::boolean as floating_gem_enabled;
+
 drop trigger if exists trg_app_users_updated_at on public.app_users;
 create trigger trg_app_users_updated_at
 before update on public.app_users
@@ -439,6 +446,21 @@ set
   town_city = excluded.town_city,
   province = excluded.province,
   precinct = excluded.precinct;
+
+create or replace view public.v_demo_quick_login_accounts as
+select
+  role,
+  email,
+  demo_password
+from public.app_users
+where email in (
+  'admin@gmail.com',
+  'misoffice@gmail.com',
+  'osaoffice@gmail.com',
+  'candidate@gmail.com',
+  'voter@gmail.com'
+)
+order by role, email;
 
 -- 91_seed_demo_elections.sql
 insert into public.ballot_positions (id, title)

@@ -5,11 +5,25 @@ import { InstitutionalTopBar } from '../components/InstitutionalTopBar'
 import { getDemoCredentialsForLogin } from '../lib/authStorage'
 import { safePostLoginPath } from '../lib/safeRedirect'
 import { resolvePostLoginRedirect } from '../lib/rolePaths'
+import type { AppRole } from '../types/roles'
 
 const demoRows = getDemoCredentialsForLogin()
+const QUICK_ROLE_ORDER: AppRole[] = [
+  'admin',
+  'mis_office',
+  'osa_office',
+  'candidate',
+  'voter',
+]
+const quickDemoRows = QUICK_ROLE_ORDER.map((role) =>
+  demoRows.find((r) => r.role === role),
+).filter((r): r is (typeof demoRows)[number] => Boolean(r))
 
 const inputClass =
   'mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-stone-900 shadow-inner shadow-stone-300/40 placeholder:text-stone-500 transition-colors duration-200 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/35'
+
+const cardClass =
+  'rounded-2xl border border-stone-200 bg-white p-8 shadow-2xl shadow-stone-300/50 ring-1 ring-stone-200 backdrop-blur-sm sm:p-9'
 
 export function LoginPage() {
   const { user, login } = useAuth()
@@ -50,6 +64,15 @@ export function LoginPage() {
     setError(null)
   }
 
+  function quickRedirectLogin(rowEmail: string, rowPassword: string) {
+    try {
+      setError(null)
+      login(rowEmail, rowPassword)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in.')
+    }
+  }
+
   return (
     <div className="flex min-h-svh flex-col bg-stone-50">
       <InstitutionalTopBar containerClass="max-w-lg">
@@ -61,14 +84,20 @@ export function LoginPage() {
             Sign in
           </p>
         </div>
+        <Link
+          to="/"
+          className="rounded-lg border border-white/35 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+        >
+          Home
+        </Link>
       </InstitutionalTopBar>
       <div className="pointer-events-none fixed inset-0 top-14 bg-[radial-gradient(ellipse_at_top,_rgba(185,28,28,0.08),transparent_55%)] sm:top-16" />
-      <div className="relative mx-auto flex min-h-0 flex-1 max-w-lg flex-col justify-center px-4 py-12 sm:px-5">
-        <div className="rounded-2xl border border-stone-200 bg-white p-8 shadow-2xl shadow-stone-300/50 ring-1 ring-stone-200 backdrop-blur-sm sm:p-9">
-          <h1 className="font-display text-center text-2xl font-semibold tracking-tight text-red-900">
+      <div className="relative mx-auto flex min-h-0 flex-1 max-w-lg flex-col justify-center px-3 py-8 sm:px-5 sm:py-12">
+        <div className={cardClass}>
+          <h1 className="font-display text-center text-2xl font-semibold tracking-tight text-red-900 sm:text-[1.75rem]">
             Sign in
           </h1>
-          <p className="mt-2 text-center text-sm text-stone-500">
+          <p className="mt-2 text-center text-sm leading-relaxed text-stone-600">
             E‑Vote · Digital voting system
           </p>
           <form onSubmit={onSubmit} className="mt-8 space-y-5">
@@ -121,7 +150,7 @@ export function LoginPage() {
             ) : null}
             <button
               type="submit"
-              className="font-display w-full rounded-xl bg-gradient-to-r from-red-600 via-red-800 to-neutral-950 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-red-950/35 transition-all duration-200 hover:from-red-500 hover:shadow-xl hover:shadow-red-950/25 active:scale-[0.99]"
+              className="font-display w-full rounded-xl bg-gradient-to-r from-red-600 via-red-800 to-neutral-950 py-3 text-sm font-semibold tracking-[0.04em] text-white shadow-lg shadow-red-950/35 transition-all duration-200 hover:from-red-500 hover:shadow-xl hover:shadow-red-950/25 active:scale-[0.99]"
             >
               Sign in
             </button>
@@ -149,11 +178,40 @@ export function LoginPage() {
           <h2 className="font-display text-sm font-semibold text-red-900">
             Demo accounts (local)
           </h2>
+          <p className="mt-2 text-xs font-medium uppercase tracking-wide text-red-800/80">
+            Quick redirect by role
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {quickDemoRows.map((row) => (
+              <button
+                key={`quick-${row.role}`}
+                type="button"
+                onClick={() => quickRedirectLogin(row.email, row.password)}
+                className="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-800 transition-colors hover:bg-red-50"
+              >
+                {row.roleLabel}
+              </button>
+            ))}
+          </div>
           <p className="mt-1 text-xs text-stone-500">
             Preloaded users for each role. Click a role to fill the form—only
             visible on this sign-in page.
           </p>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 shadow-inner shadow-stone-200/50">
+          <div className="mt-4 space-y-2 sm:hidden">
+            {demoRows.map((row) => (
+              <button
+                key={`mobile-${row.role}-${row.email}`}
+                type="button"
+                onClick={() => fillDemo(row.email, row.password)}
+                className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-left shadow-sm transition-colors hover:border-red-300 hover:bg-red-50/70"
+              >
+                <p className="text-sm font-semibold text-red-800">{row.roleLabel}</p>
+                <p className="mt-1 font-mono text-[11px] text-stone-500">{row.email}</p>
+                <p className="font-mono text-[11px] text-stone-500">{row.password}</p>
+              </button>
+            ))}
+          </div>
+          <div className="mt-4 hidden overflow-x-auto rounded-xl border border-stone-200 shadow-inner shadow-stone-200/50 sm:block">
             <table className="w-full min-w-[20rem] text-left text-sm">
               <thead>
                 <tr className="border-b border-stone-200 bg-white text-xs uppercase tracking-wider text-stone-500">

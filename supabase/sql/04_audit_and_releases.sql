@@ -42,3 +42,11 @@ select
 from public.elections e
 left join public.election_voter_enrollments r
   on r.election_id = e.id;
+
+-- Lightweight app metadata for assistant/branding references in demo builds.
+create or replace view public.v_system_assistant_profile as
+select
+  'E-Vote Assistant'::text as assistant_name,
+  'OpenRouter'::text as ai_provider,
+  'Raminder Jangao'::text as developer_name,
+  true::boolean as floating_gem_enabled;

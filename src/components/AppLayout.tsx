@@ -12,9 +12,10 @@ import { useAuth } from '../context/useAuth'
 import { roleBasePath } from '../lib/rolePaths'
 import type { AppRole } from '../types/roles'
 import { getRoleDisplayLabel } from '../types/roles'
+import { FloatingAIAssistant } from './FloatingAIAssistant'
 
 const headerBarClass =
-  'border-b border-red-800/40 bg-gradient-to-r from-[#5b1f2c] via-[#4b1823] to-[#5b1f2c] text-white shadow-md shadow-red-900/20'
+  'border-b border-red-700/35 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] text-white shadow-md shadow-red-800/20'
 
 const asideShellClass =
   'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-800/35 bg-gradient-to-b from-[#5b1f2c] via-[#4b1823] to-[#3f141e]'
@@ -264,7 +265,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   )
 
   return (
-    <div className="min-h-svh bg-stone-100 text-stone-900">
+    <div className="min-h-svh overflow-x-clip bg-stone-100 text-stone-900">
       <div className="flex min-h-svh flex-col lg:flex-row">
         <aside
           className={`${asideShellClass} hidden w-64 border-r lg:sticky lg:top-0 lg:flex lg:h-svh lg:max-h-svh`}
@@ -277,7 +278,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             ref={headerRef}
             className={`${headerBarClass} sticky top-0 shrink-0`}
           >
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-3.5 sm:gap-3 sm:px-6 sm:py-4 lg:px-8">
               <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
                 <button
                   type="button"
@@ -295,7 +296,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                   <p className="font-display text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-red-200/85">
                     E‑Vote · ISPSC Tagudin
                   </p>
-                  <p className="font-display mt-0.5 truncate text-lg font-semibold tracking-tight text-white">
+                  <p className="font-display mt-0.5 truncate text-base font-semibold tracking-tight text-white sm:text-lg">
                     Management console
                   </p>
                 </div>
@@ -310,7 +311,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               ) : null}
             </div>
           </header>
-          <main className="flex-1 bg-stone-50/80 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <main className="flex-1 bg-stone-50/80 px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
             <div className="mx-auto w-full max-w-6xl">
               {children ?? <Outlet />}
             </div>
@@ -340,6 +341,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
           </>
         ) : null}
       </div>
+      <FloatingAIAssistant developerName="Raminder Jangao" />
     </div>
   )
 }
