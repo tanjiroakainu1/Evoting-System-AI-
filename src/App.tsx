@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider'
 import { AppLayout } from './components/AppLayout'
+import { FloatingAIAssistant } from './components/FloatingAIAssistant'
 import { LegacyAppRedirect } from './components/LegacyAppRedirect'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { LandingPage } from './pages/LandingPage'
@@ -69,92 +70,95 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<VoterRegisterPage />} />
+        <>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<VoterRegisterPage />} />
 
-          <Route path="/admin" element={<AdminShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="users" element={<UserManagementPage />} />
-            <Route path="voters" element={<VoterManagementPage />} />
-            <Route path="candidates" element={<CandidateManagementPage />} />
-            <Route path="mis-office" element={<MisOfficeManagementPage />} />
-            <Route path="osa-office" element={<OsaOfficeManagementPage />} />
-            <Route path="positions" element={<PositionsManagementPage />} />
-            <Route path="elections" element={<ElectionsManagementPage />} />
-            <Route path="election-results" element={<ElectionResultsPage />} />
-            <Route
-              path="election-results/:electionId"
-              element={<ElectionResultDetailPage />}
-            />
-            <Route
-              path="campaign-applications"
-              element={<CampaignApplicationsReviewPage />}
-            />
-            <Route path="vote-logs" element={<AdminVoteSubmissionLogsPage />} />
-          </Route>
+            <Route path="/admin" element={<AdminShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="users" element={<UserManagementPage />} />
+              <Route path="voters" element={<VoterManagementPage />} />
+              <Route path="candidates" element={<CandidateManagementPage />} />
+              <Route path="mis-office" element={<MisOfficeManagementPage />} />
+              <Route path="osa-office" element={<OsaOfficeManagementPage />} />
+              <Route path="positions" element={<PositionsManagementPage />} />
+              <Route path="elections" element={<ElectionsManagementPage />} />
+              <Route path="election-results" element={<ElectionResultsPage />} />
+              <Route
+                path="election-results/:electionId"
+                element={<ElectionResultDetailPage />}
+              />
+              <Route
+                path="campaign-applications"
+                element={<CampaignApplicationsReviewPage />}
+              />
+              <Route path="vote-logs" element={<AdminVoteSubmissionLogsPage />} />
+            </Route>
 
-          <Route path="/voter" element={<VoterShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="elections" element={<VoterElectionsPage />} />
-            <Route path="vote/:electionId" element={<VoterVotePage />} />
-            <Route path="ballot-history" element={<VoterBallotHistoryPage />} />
-          </Route>
+            <Route path="/voter" element={<VoterShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="elections" element={<VoterElectionsPage />} />
+              <Route path="vote/:electionId" element={<VoterVotePage />} />
+              <Route path="ballot-history" element={<VoterBallotHistoryPage />} />
+            </Route>
 
-          <Route path="/candidate" element={<CandidateShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route
-              path="campaign/application"
-              element={<CandidateCampaignApplicationPage />}
-            />
-            <Route
-              path="campaign/history"
-              element={<CandidateApplicationHistoryPage />}
-            />
-          </Route>
+            <Route path="/candidate" element={<CandidateShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route
+                path="campaign/application"
+                element={<CandidateCampaignApplicationPage />}
+              />
+              <Route
+                path="campaign/history"
+                element={<CandidateApplicationHistoryPage />}
+              />
+            </Route>
 
-          <Route path="/mis-office" element={<MisOfficeShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route
-              path="elections"
-              element={<ElectionsManagementPage pathRole="mis_office" />}
-            />
-            <Route
-              path="election-results"
-              element={<ElectionResultsPage pathRole="mis_office" />}
-            />
-            <Route
-              path="election-results/:electionId"
-              element={<ElectionResultDetailPage pathRole="mis_office" />}
-            />
-          </Route>
+            <Route path="/mis-office" element={<MisOfficeShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route
+                path="elections"
+                element={<ElectionsManagementPage pathRole="mis_office" />}
+              />
+              <Route
+                path="election-results"
+                element={<ElectionResultsPage pathRole="mis_office" />}
+              />
+              <Route
+                path="election-results/:electionId"
+                element={<ElectionResultDetailPage pathRole="mis_office" />}
+              />
+            </Route>
 
-          <Route path="/osa-office" element={<OsaOfficeShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route
-              path="elections"
-              element={<ElectionsManagementPage pathRole="osa_office" />}
-            />
-            <Route
-              path="election-results"
-              element={<ElectionResultsPage pathRole="osa_office" />}
-            />
-            <Route
-              path="election-results/:electionId"
-              element={<ElectionResultDetailPage pathRole="osa_office" />}
-            />
-          </Route>
+            <Route path="/osa-office" element={<OsaOfficeShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route
+                path="elections"
+                element={<ElectionsManagementPage pathRole="osa_office" />}
+              />
+              <Route
+                path="election-results"
+                element={<ElectionResultsPage pathRole="osa_office" />}
+              />
+              <Route
+                path="election-results/:electionId"
+                element={<ElectionResultDetailPage pathRole="osa_office" />}
+              />
+            </Route>
 
-          <Route path="/app/*" element={<LegacyAppRedirect />} />
+            <Route path="/app/*" element={<LegacyAppRedirect />} />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <FloatingAIAssistant developerName="Raminder Jangao" />
+        </>
       </BrowserRouter>
     </AuthProvider>
   )

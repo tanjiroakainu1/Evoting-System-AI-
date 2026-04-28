@@ -131,9 +131,9 @@ export function FloatingAIAssistant({
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-[70] sm:bottom-5 sm:left-auto sm:right-5">
+    <div className="pointer-events-none fixed bottom-4 right-4 z-[70] flex w-[min(calc(100vw-2rem),26rem)] max-w-[26rem] flex-col items-stretch pb-[max(0px,env(safe-area-inset-bottom))] sm:bottom-5 sm:right-5">
       {open ? (
-        <section className="mb-3 flex h-[min(72svh,32rem)] w-full max-w-[26rem] flex-col rounded-2xl border border-red-200 bg-white/95 shadow-2xl backdrop-blur-sm sm:h-[min(76svh,34rem)] sm:w-[24rem]">
+        <section className="pointer-events-auto mb-3 flex h-[min(72svh,32rem)] w-full flex-col rounded-2xl border border-red-200 bg-white/95 shadow-2xl backdrop-blur-sm sm:h-[min(76svh,34rem)] sm:w-[24rem] sm:self-end">
           <header className="flex items-center justify-between rounded-t-2xl border-b border-red-200 bg-gradient-to-r from-[#5b1f2c] via-[#4b1823] to-[#5b1f2c] px-3 py-2 text-white">
             <div>
               <p className="text-sm font-semibold">AI Assistant</p>
@@ -197,7 +197,7 @@ export function FloatingAIAssistant({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="floating-gem relative grid h-14 w-14 place-items-center rounded-full border border-red-300/70 bg-gradient-to-br from-red-500 via-red-700 to-emerald-500 shadow-xl"
+        className="floating-gem pointer-events-auto relative ml-auto grid h-14 w-14 shrink-0 place-items-center rounded-full border border-red-300/70 bg-gradient-to-br from-red-500 via-red-700 to-emerald-500 shadow-xl"
         aria-label="Open AI assistant"
       >
         <span className="floating-gem-core" />

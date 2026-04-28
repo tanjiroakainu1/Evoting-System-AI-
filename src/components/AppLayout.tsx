@@ -13,7 +13,6 @@ import { useAuth } from '../context/useAuth'
 import { roleBasePath } from '../lib/rolePaths'
 import type { AppRole } from '../types/roles'
 import { getRoleDisplayLabel } from '../types/roles'
-import { FloatingAIAssistant } from './FloatingAIAssistant'
 
 const headerBarClass =
   'border-b border-red-700/30 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] pt-[max(2px,env(safe-area-inset-top))] text-white shadow-sm shadow-red-900/15'
@@ -243,7 +242,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       ) : null}
 
       {user ? (
-        <div className="shrink-0 border-t border-red-950/35 p-4">
+        <div className="shrink-0 border-t border-red-950/35 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="rounded-xl border border-red-800/35 bg-black/35 px-3 py-2.5 text-xs shadow-inner shadow-black/25">
             <p className="text-stone-500">Signed in</p>
             <p className="mt-0.5 font-medium text-stone-100">{user.fullName}</p>
@@ -327,7 +326,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
           <>
             <button
               type="button"
-              className="fixed right-0 z-[45] bg-black/50 backdrop-blur-[2px] lg:hidden"
+              className="fixed right-0 z-[75] bg-black/50 backdrop-blur-[2px] lg:hidden"
               style={{
                 top: mobileNavTopPx,
                 left: 0,
@@ -338,7 +337,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             />
             <aside
               id={mobileNavId}
-              className={`${asideShellClass} fixed bottom-0 left-0 z-[50] flex w-[min(20rem,88vw)] border-r shadow-2xl shadow-black/40 lg:hidden`}
+              className={`${asideShellClass} fixed bottom-0 left-0 z-[80] flex w-[min(20rem,88vw)] border-r shadow-2xl shadow-black/40 lg:hidden`}
               style={{ top: mobileNavTopPx } satisfies CSSProperties}
             >
               {renderSidebarInner(closeMobileNav)}
@@ -346,7 +345,6 @@ export function AppLayout({ children }: { children?: ReactNode }) {
           </>
         ) : null}
       </div>
-      <FloatingAIAssistant developerName="Raminder Jangao" />
     </div>
   )
 }
