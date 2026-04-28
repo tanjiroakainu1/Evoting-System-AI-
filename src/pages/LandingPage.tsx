@@ -32,31 +32,31 @@ export function LandingPage() {
   return (
     <div className="min-h-svh bg-stone-50 text-stone-800">
       {/* Institutional header */}
-      <header className="relative border-b border-red-700/35 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] text-white shadow-lg shadow-red-800/20">
+      <header className="relative border-b border-red-700/30 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] pt-[max(2px,env(safe-area-inset-top))] text-white shadow-sm shadow-red-900/15">
         <div
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,transparent_50%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,transparent_45%)]"
           aria-hidden
         />
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-6 px-4 py-6 sm:grid-cols-[auto_1fr_auto] sm:gap-6 sm:px-5">
-          <div className="flex justify-center sm:justify-start">
-            <div className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white shadow-xl shadow-black/25 ring-1 ring-black/5 sm:h-20 sm:w-20">
-              <IspscSealGraphic className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]" />
+        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-2 px-3 py-2 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-x-4 sm:gap-y-0 sm:px-5 sm:py-2.5">
+          <div className="order-1 flex justify-center sm:order-none sm:justify-start">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white shadow-md shadow-black/20 ring-1 ring-black/5 sm:h-14 sm:w-14 sm:rounded-xl">
+              <IspscSealGraphic className="h-9 w-9 sm:h-12 sm:w-12" />
             </div>
           </div>
-          <div className="text-center sm:text-left">
-            <p className="font-display text-xs font-medium tracking-wide text-red-100/95 sm:text-sm">
+          <div className="order-3 min-w-0 py-0.5 text-center sm:order-none sm:py-0 sm:text-left">
+            <p className="font-display text-[0.65rem] font-medium leading-tight tracking-wide text-red-100/95 sm:text-xs">
               {institution.lines[0]}
             </p>
-            <p className="font-display text-lg font-semibold leading-tight tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] sm:text-xl md:text-2xl">
+            <p className="font-display mt-0.5 text-pretty text-sm font-semibold leading-tight tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:mt-0.5 sm:text-base md:text-lg">
               {institution.lines[1]}
             </p>
-            <p className="font-display text-xs font-medium tracking-wide text-red-100/90 sm:text-sm">
+            <p className="font-display mt-0.5 text-[0.65rem] font-medium leading-tight tracking-wide text-red-100/90 sm:text-xs">
               {institution.lines[2]}
             </p>
           </div>
-          <div className="flex justify-center sm:justify-end">
-            <div className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white shadow-xl shadow-black/25 ring-1 ring-black/5 sm:h-20 sm:w-20">
-              <BagongPilipinasMark className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]" />
+          <div className="order-2 flex justify-center sm:order-none sm:justify-end">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white shadow-md shadow-black/20 ring-1 ring-black/5 sm:h-14 sm:w-14 sm:rounded-xl">
+              <BagongPilipinasMark className="h-9 w-9 sm:h-12 sm:w-12" />
             </div>
           </div>
         </div>
@@ -65,22 +65,14 @@ export function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#c02626] via-[#991b1b] to-[#3f0a0a] text-white">
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_70%_0%,rgba(255,255,255,0.12),transparent_55%)]"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_0%_100%,rgba(0,0,0,0.25),transparent_50%)]"
-          aria-hidden
-        />
-        <div
           className="pointer-events-none absolute -right-4 top-1/2 hidden -translate-y-1/2 text-white lg:block"
           aria-hidden
         >
           <ShieldWatermark className="h-[min(85vh,28rem)] w-auto opacity-[0.14]" />
         </div>
         {user ? (
-          <div className="relative z-20 mx-auto flex max-w-6xl justify-end px-4 pt-5 sm:px-5">
-                       <Link
+          <div className="relative z-20 mx-auto flex max-w-6xl justify-end px-4 pt-4 sm:px-5 sm:pt-5">
+            <Link
               to={roleBasePath(user.role as AppRole)}
               className="rounded-xl border border-white/35 bg-white/95 px-4 py-2.5 text-sm font-semibold text-red-900 shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white active:translate-y-0"
             >

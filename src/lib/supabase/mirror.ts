@@ -39,6 +39,14 @@ async function replaceTableRows<T extends Record<string, unknown>>(
   }
 }
 
+/** Clears Supabase Auth tokens from browser storage (no network). Helps avoid slow background refresh after sign-out. */
+export function clearLocalSupabaseAuthSession(): void {
+  if (!hasSupabaseConfig) return
+  void supabase.auth.signOut({ scope: 'local' }).catch(() => {
+    /* ignore */
+  })
+}
+
 export async function ensureSupabaseAuthUser(input: {
   email: string
   password: string

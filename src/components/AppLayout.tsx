@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import type { CSSProperties, ReactNode } from 'react'
 import {
   useCallback,
@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { flushSync } from 'react-dom'
 import { useAuth } from '../context/useAuth'
 import { roleBasePath } from '../lib/rolePaths'
 import type { AppRole } from '../types/roles'
@@ -15,7 +16,7 @@ import { getRoleDisplayLabel } from '../types/roles'
 import { FloatingAIAssistant } from './FloatingAIAssistant'
 
 const headerBarClass =
-  'border-b border-red-700/35 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] text-white shadow-md shadow-red-800/20'
+  'border-b border-red-700/30 bg-gradient-to-r from-[#7a2a3a] via-[#662332] to-[#7a2a3a] pt-[max(2px,env(safe-area-inset-top))] text-white shadow-sm shadow-red-900/15'
 
 const asideShellClass =
   'flex min-h-0 shrink-0 flex-col overflow-hidden border-red-800/35 bg-gradient-to-b from-[#5b1f2c] via-[#4b1823] to-[#3f141e]'
@@ -80,6 +81,7 @@ function HamburgerIcon({ className }: { className?: string }) {
 
 export function AppLayout({ children }: { children?: ReactNode }) {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const base = user ? roleBasePath(user.role as AppRole) : '/'
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [mobileNavTopPx, setMobileNavTopPx] = useState(0)
@@ -252,10 +254,13 @@ export function AppLayout({ children }: { children?: ReactNode }) {
           <button
             type="button"
             onClick={() => {
-              logout()
               onNavigate?.()
+              flushSync(() => {
+                logout()
+              })
+              navigate('/login', { replace: true })
             }}
-            className="font-display mt-3 w-full rounded-xl border border-red-700/45 bg-red-950/45 py-2.5 text-sm font-medium text-red-50 transition-all hover:border-red-600/50 hover:bg-red-900/55 active:scale-[0.98]"
+            className="font-display mt-3 w-full rounded-xl border border-red-700/45 bg-red-950/45 py-2.5 text-sm font-medium text-red-50 transition-colors hover:border-red-600/50 hover:bg-red-900/55 active:bg-red-900/65"
           >
             Sign out
           </button>
@@ -278,8 +283,8 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             ref={headerRef}
             className={`${headerBarClass} sticky top-0 shrink-0`}
           >
-            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-3.5 sm:gap-3 sm:px-6 sm:py-4 lg:px-8">
-              <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-6 sm:py-2.5 lg:px-8">
+              <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-4">
                 <button
                   type="button"
                   className="shrink-0 rounded-lg border border-white/25 bg-white/10 p-2 text-white transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-200 lg:hidden"
@@ -292,19 +297,19 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                   </span>
                   <HamburgerIcon className="block" />
                 </button>
-                <div className="min-w-0">
-                  <p className="font-display text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-red-200/85">
+                <div className="min-w-0 flex-1">
+                  <p className="font-display text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-red-200/85 sm:text-[0.65rem] sm:tracking-[0.2em]">
                     E‑Vote · ISPSC Tagudin
                   </p>
-                  <p className="font-display mt-0.5 truncate text-base font-semibold tracking-tight text-white sm:text-lg">
+                  <p className="font-display mt-0.5 text-pretty text-[0.95rem] font-semibold leading-snug tracking-tight text-white sm:text-lg">
                     Management console
                   </p>
                 </div>
               </div>
               {user ? (
-                <div className="hidden text-right text-sm sm:block">
-                  <p className="font-medium text-red-50">{user.fullName}</p>
-                  <p className="mt-0.5 text-xs text-red-200/80">
+                <div className="min-w-0 max-w-[min(100%,14rem)] text-right text-xs sm:block sm:max-w-[20rem] sm:text-sm">
+                  <p className="truncate font-medium text-red-50">{user.fullName}</p>
+                  <p className="mt-0.5 truncate text-[0.65rem] text-red-200/85 sm:text-xs">
                     {getRoleDisplayLabel(user.role)} · {user.email}
                   </p>
                 </div>

@@ -14,6 +14,7 @@ import { assertUserMaySignIn } from '../lib/loginPolicy'
 import { profileFieldsFromForm } from '../lib/profileFromForm'
 import { roleFromPublicAccountType } from '../lib/publicRegistration'
 import { assertPasswordRules } from '../lib/registrationValidate'
+import { clearLocalSupabaseAuthSession } from '../lib/supabase/mirror'
 import { AuthContext } from './authContext'
 import type { RegistrationFormState } from '../types/registrationForm'
 
@@ -69,6 +70,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setSessionUserId(null)
+    setUser(null)
+    document.body.style.removeProperty('overflow')
+    clearLocalSupabaseAuthSession()
     emitAuth()
   }, [])
 

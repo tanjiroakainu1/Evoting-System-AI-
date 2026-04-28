@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider'
-import { FloatingParticles } from './components/FloatingParticles'
 import { AppLayout } from './components/AppLayout'
 import { LegacyAppRedirect } from './components/LegacyAppRedirect'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -70,7 +69,6 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <FloatingParticles />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />

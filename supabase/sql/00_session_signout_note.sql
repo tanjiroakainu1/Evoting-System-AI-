@@ -1,0 +1,10 @@
+-- 00_session_signout_note.sql
+-- Sign-out applies to every role (admin, MIS, OSA, candidate, voter) in the same way.
+--
+-- The web app keeps the signed-in account id in browser localStorage (key: bevms_session_user_id).
+-- Logging out only clears that key and updates React state; it does not require a PostgreSQL
+-- round-trip. Optional: the client also clears the local Supabase Auth session (no server call).
+--
+-- Database RLS still governs reads/writes when the app mirrors data to Supabase; it does not
+-- control SPA logout timing. If logout feels slow, fix client-side work (large re-renders,
+-- mirror upserts, or stuck body { overflow: hidden }), not this schema.

@@ -11,6 +11,7 @@
 -- 90_seed_demo_accounts.sql
 -- 91_seed_demo_elections.sql
 -- 92_seed_demo_flow.sql
+-- (See end of file for 00_session_signout_note.sql documentation excerpt.)
 
 -- 00_extensions.sql
 create extension if not exists pgcrypto;
@@ -656,3 +657,7 @@ set
   actor_email = excluded.actor_email,
   actor_role = excluded.actor_role,
   created_at = excluded.created_at;
+
+-- 00_session_signout_note.sql (documentation; safe to re-run)
+-- Sign-out for all roles is handled in the browser (localStorage session + optional local Supabase Auth clear).
+-- No SQL statement is required for logout; RLS applies to API data access only.
